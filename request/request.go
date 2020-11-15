@@ -2,6 +2,7 @@ package request
 
 import (
 	"context"
+	"fmt"
 	"github.com/jianzhiyao/gclient/response"
 	"github.com/jianzhiyao/gclient/structs"
 	"io"
@@ -57,21 +58,16 @@ func (r *Request) newHttpClient() (c *http.Client, putBack func(client *http.Cli
 	c.Jar = r.clientCookieJar
 	c.Timeout = r.clientTimeout
 
-
-
 	return c, putClientToPool
 }
 
 func (r *Request) Do(method, url string, body io.Reader) (*response.Response, error) {
+	var (
+		resp *http.Response
+		err  error
+	)
 	c, putBack := r.newHttpClient()
 	defer putBack(c)
-	//
-	//c := &http.Client{
-	//	Transport:     nil,
-	//	CheckRedirect: nil,
-	//	Jar:           nil,
-	//	Timeout:       0,
-	//}
 
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
@@ -96,10 +92,22 @@ func (r *Request) Do(method, url string, body io.Reader) (*response.Response, er
 		req.Header.Set(key, value)
 	}
 
-	resp, err := c.Do(req)
+	tryCount := r.retry
+	if tryCount <= 1 {
+		tryCount = 1
+	}
+	fmt.Println(`c.Timeout`,c.Timeout)
+	for tryCount > 0 {
+		resp, err = c.Do(req)
+		if err != nil {
+			break
+		}
+		tryCount--
+	}
 	if err != nil {
 		return nil, err
 	}
+
 	return response.New(resp), nil
 }
 

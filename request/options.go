@@ -10,29 +10,29 @@ import (
 type Option func(req *Request)
 type CheckRedirectHandler func(req *http.Request, via []*http.Request) error
 
-func Timeout(timeout time.Duration) Option {
+func OptTimeout(timeout time.Duration) Option {
 	return func(req *Request) {
 		req.clientTimeout = timeout
 	}
 }
 
-func Context(ctx context.Context) Option {
+func OptContext(ctx context.Context) Option {
 	return func(req *Request) {
 		req.ctx = ctx
 	}
 }
 
-func Header(key, value string) Option {
+func OptHeader(key, value string) Option {
 	return func(req *Request) {
 		req.headers[key] = value
 	}
 }
 
-func UserAgent(ua string) Option {
-	return Header(HeaderUserAgent, ua)
+func OptUserAgent(ua string) Option {
+	return OptHeader(HeaderUserAgent, ua)
 }
 
-func Headers(headers map[string]string) Option {
+func OptHeaders(headers map[string]string) Option {
 	return func(req *Request) {
 		for key, value := range headers {
 			req.headers[key] = value
@@ -40,31 +40,31 @@ func Headers(headers map[string]string) Option {
 	}
 }
 
-func EnableGzip() Option {
+func OptEnableGzip() Option {
 	return enableSign(SignGzip)
 }
 
-func DisableGzip() Option {
+func OptDisableGzip() Option {
 	return disableSign(SignGzip)
 }
 
-func EnableDeflate() Option {
+func OptEnableDeflate() Option {
 	return enableSign(SignDeflate)
 }
 
-func DisableDeflate() Option {
+func OptDisableDeflate() Option {
 	return disableSign(SignDeflate)
 }
 
-func EnableBr() Option {
+func OptEnableBr() Option {
 	return enableSign(SignBr)
 }
 
-func DisableBr() Option {
+func OptDisableBr() Option {
 	return disableSign(SignBr)
 }
 
-func EnableCookie(options *cookiejar.Options) Option {
+func OptEnableCookie(options *cookiejar.Options) Option {
 	return func(req *Request) {
 		var err error
 		req.clientCookieJar, err = cookiejar.New(options)
@@ -74,37 +74,37 @@ func EnableCookie(options *cookiejar.Options) Option {
 	}
 }
 
-func DisableCookie() Option {
+func OptDisableCookie() Option {
 	return func(req *Request) {
 		req.clientCookieJar = nil
 	}
 }
 
-func EnableTransport(roundTripper http.RoundTripper) Option {
+func OptEnableTransport(roundTripper http.RoundTripper) Option {
 	return func(req *Request) {
 		req.clientTransport = roundTripper
 	}
 }
 
-func DisableTransport() Option {
+func OptDisableTransport() Option {
 	return func(req *Request) {
 		req.clientTransport = nil
 	}
 }
 
-func EnableCheckRedirect(clientCheckRedirect CheckRedirectHandler) Option {
+func OptEnableCheckRedirect(clientCheckRedirect CheckRedirectHandler) Option {
 	return func(req *Request) {
 		req.clientCheckRedirect = clientCheckRedirect
 	}
 }
 
-func DisableCheckRedirect() Option {
+func OptDisableCheckRedirect() Option {
 	return func(req *Request) {
 		req.clientCheckRedirect = nil
 	}
 }
 
-func Retry(times int) Option {
+func OptRetry(times int) Option {
 	return func(req *Request) {
 		req.retry = times
 	}
