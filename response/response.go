@@ -27,12 +27,11 @@ func (r *Response) readBytes() ([]byte, error) {
 	}
 	defer r.resp.Body.Close()
 
-	contentEncoding := r.resp.Header.Get("Content-Encoding")
 	var (
 		reader io.ReadCloser
 		err    error
 	)
-	switch contentEncoding {
+	switch r.resp.Header.Get("Content-Encoding") {
 	case `gzip`:
 		reader, err = gzip.NewReader(r.resp.Body)
 	case `deflate`:
