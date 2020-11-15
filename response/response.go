@@ -8,9 +8,9 @@ import (
 	"errors"
 	"github.com/dsnet/compress/brotli"
 	"gopkg.in/yaml.v2"
+	"io"
 	"io/ioutil"
 	"net/http"
-	"strings"
 )
 
 type Response struct {
@@ -22,38 +22,30 @@ func New(response *http.Response) *Response {
 }
 
 func (r *Response) readBytes() ([]byte, error) {
-	var body []byte
 	if r.resp == nil || r.resp.Body == nil {
 		return nil, errors.New(`invalid response`)
 	}
 	defer r.resp.Body.Close()
 
 	contentEncoding := r.resp.Header.Get("Content-Encoding")
-	if strings.Contains(contentEncoding, `gzip`) {
-		reader, err := gzip.NewReader(r.resp.Body)
-		defer reader.Close()
-		if err != nil {
-			return nil, err
-		}
-		body, err = ioutil.ReadAll(reader)
-		return body, err
-	} else if strings.Contains(contentEncoding, `deflate`) {
-		reader := flate.NewReader(r.resp.Body)
-		defer reader.Close()
-		body, err := ioutil.ReadAll(reader)
-		return body, err
-	} else if strings.Contains(contentEncoding, `br`) {
-		reader, err := brotli.NewReader(r.resp.Body, nil)
-		if err != nil {
-			return nil, err
-		}
-		defer reader.Close()
-		body, err := ioutil.ReadAll(reader)
-		return body, err
+	var (
+		reader io.ReadCloser
+		err    error
+	)
+	switch contentEncoding {
+	case `gzip`:
+		reader, err = gzip.NewReader(r.resp.Body)
+	case `deflate`:
+		reader = flate.NewReader(r.resp.Body)
+	case `br`:
+		reader, err = brotli.NewReader(r.resp.Body, nil)
+	default:
+		reader = r.resp.Body
 	}
-
-	body, err := ioutil.ReadAll(r.resp.Body)
-	return body, err
+	if err != nil {
+		return nil, err
+	}
+	return ioutil.ReadAll(reader)
 }
 
 func (r *Response) JsonUnmarshal(v interface{}) error {
