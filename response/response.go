@@ -7,6 +7,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"github.com/dsnet/compress/brotli"
+	"github.com/jianzhiyao/gclient/structs"
 	"gopkg.in/yaml.v2"
 	"io"
 	"io/ioutil"
@@ -31,7 +32,7 @@ func (r *Response) readBytes() ([]byte, error) {
 		reader io.ReadCloser
 		err    error
 	)
-	switch r.resp.Header.Get("Content-Encoding") {
+	switch r.resp.Header.Get(structs.HeaderContentEncoding) {
 	case `gzip`:
 		reader, err = gzip.NewReader(r.resp.Body)
 	case `deflate`:
