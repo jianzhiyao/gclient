@@ -64,7 +64,7 @@ func OptDisableBr() Option {
 	return disableSign(SignBr)
 }
 
-func OptEnableCookie(options *cookiejar.Options) Option {
+func OptCookieJar(options *cookiejar.Options) Option {
 	return func(req *Request) {
 		var err error
 		req.clientCookieJar, err = cookiejar.New(options)
@@ -74,33 +74,15 @@ func OptEnableCookie(options *cookiejar.Options) Option {
 	}
 }
 
-func OptDisableCookie() Option {
-	return func(req *Request) {
-		req.clientCookieJar = nil
-	}
-}
-
-func OptEnableTransport(roundTripper http.RoundTripper) Option {
+func OptTransport(roundTripper http.RoundTripper) Option {
 	return func(req *Request) {
 		req.clientTransport = roundTripper
 	}
 }
 
-func OptDisableTransport() Option {
-	return func(req *Request) {
-		req.clientTransport = nil
-	}
-}
-
-func OptEnableCheckRedirect(clientCheckRedirect CheckRedirectHandler) Option {
+func OptCheckRedirectHandler(clientCheckRedirect CheckRedirectHandler) Option {
 	return func(req *Request) {
 		req.clientCheckRedirect = clientCheckRedirect
-	}
-}
-
-func OptDisableCheckRedirect() Option {
-	return func(req *Request) {
-		req.clientCheckRedirect = nil
 	}
 }
 
