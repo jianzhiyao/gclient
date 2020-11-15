@@ -1,4 +1,4 @@
-package request
+package client
 
 import (
 	"context"
@@ -19,11 +19,11 @@ const (
 	SignBr      Sign = 1 << 2
 )
 
-type Request struct {
+type Client struct {
 	ctx context.Context
 
 	retry int
-	//Request headers
+	//Client level headers
 	headers map[string]string
 
 	clientCookieJar     *cookiejar.Jar
@@ -34,23 +34,23 @@ type Request struct {
 	sign int8
 }
 
-func (r *Request) Option(option Option) *Request {
+func (r *Client) Option(option Option) *Client {
 	option(r)
 	return r
 }
 
-func (r *Request) Close() {
+func (r *Client) Close() {
 
 }
 
-func (r *Request) Options(options ...Option) *Request {
+func (r *Client) Options(options ...Option) *Client {
 	for _, option := range options {
 		r.Option(option)
 	}
 	return r
 }
 
-func (r *Request) newHttpClient() (c *http.Client, returnBack ReturnHttpClient) {
+func (r *Client) newHttpClient() (c *http.Client, returnBack ReturnHttpClient) {
 	c, returnBack = getClientFromPool()
 	c.Transport = r.clientTransport
 	c.CheckRedirect = r.clientCheckRedirect
@@ -60,7 +60,7 @@ func (r *Request) newHttpClient() (c *http.Client, returnBack ReturnHttpClient) 
 	return
 }
 
-func (r *Request) Do(method, url string, body io.Reader) (*response.Response, error) {
+func (r *Client) Do(method, url string, body io.Reader) (*response.Response, error) {
 	var (
 		resp *http.Response
 		err  error
@@ -84,7 +84,7 @@ func (r *Request) Do(method, url string, body io.Reader) (*response.Response, er
 		contentEncoding = append(contentEncoding, structs.ContentEncodingBr)
 	}
 	if len(contentEncoding) > 0 {
-		r.headers[HeaderAcceptEncoding] = strings.Join(contentEncoding, `, `)
+		r.headers[structs.HeaderAcceptEncoding] = strings.Join(contentEncoding, `, `)
 	}
 
 	for key, value := range r.headers {
@@ -109,8 +109,8 @@ func (r *Request) Do(method, url string, body io.Reader) (*response.Response, er
 	return response.New(resp), nil
 }
 
-func New(options ...Option) *Request {
-	req := &Request{
+func New(options ...Option) *Client {
+	req := &Client{
 		ctx:                 nil,
 		retry:               0,
 		headers:             make(map[string]string),

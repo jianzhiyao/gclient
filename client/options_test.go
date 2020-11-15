@@ -1,4 +1,4 @@
-package request
+package client
 
 import (
 	"context"
@@ -40,7 +40,7 @@ func TestOptEnableBr2(t *testing.T) {
 		return
 	}
 
-	if !strings.Contains(resp.Header(HeaderContentEncoding), structs.ContentEncodingBr) {
+	if !strings.Contains(resp.Header(structs.HeaderContentEncoding), structs.ContentEncodingBr) {
 		t.Error()
 		return
 	}
@@ -85,7 +85,7 @@ func TestOptEnableGzip2(t *testing.T) {
 		return
 	}
 
-	if !strings.Contains(resp.Header(HeaderContentEncoding), structs.ContentEncodingGzip) {
+	if !strings.Contains(resp.Header(structs.HeaderContentEncoding), structs.ContentEncodingGzip) {
 		t.Error()
 		return
 	}
@@ -129,7 +129,7 @@ func TestOptEnableDeflate2(t *testing.T) {
 		return
 	}
 
-	if !strings.Contains(resp.Header(HeaderContentEncoding), structs.ContentEncodingDeflate) {
+	if !strings.Contains(resp.Header(structs.HeaderContentEncoding), structs.ContentEncodingDeflate) {
 		t.Error()
 		return
 	}
@@ -247,7 +247,7 @@ func TestOptUserAgent(t *testing.T) {
 		OptUserAgent(`server`),
 	)
 
-	if req.headers[HeaderUserAgent] != `server` {
+	if req.headers[structs.HeaderUserAgent] != `server` {
 		t.Error()
 		return
 	}

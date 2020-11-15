@@ -1,4 +1,4 @@
-package request
+package structs
 
 const (
 	HeaderUserAgent        = `User-Agent`
