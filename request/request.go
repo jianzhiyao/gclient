@@ -1,0 +1,91 @@
+package request
+
+import (
+	"context"
+	"github.com/jianzhiyao/gclient/response"
+	"io"
+	"net/http"
+	"net/http/cookiejar"
+	"time"
+)
+
+type Sign int8
+
+const (
+	SignGzip    Sign = 1 << 0
+	SignDeflate Sign = 1 << 1
+	SignBr      Sign = 1 << 2
+)
+
+type Request struct {
+	ctx context.Context
+
+	retry int
+	//Request headers
+	headers map[string]string
+
+	clientCookieJar     *cookiejar.Jar
+	clientTransport     *http.Transport
+	clientCheckRedirect CheckRedirectHandler
+	clientTimeout       time.Duration
+
+	sign int8
+}
+
+func (r *Request) Option(option Option) *Request {
+	option(r)
+	return r
+}
+
+func (r *Request) Close() {
+
+}
+
+func (r *Request) Options(options ...Option) *Request {
+	for _, option := range options {
+		r.Option(option)
+	}
+	return r
+}
+
+func (r *Request) newHttpClient() (c *http.Client, putBack func(client *http.Client)) {
+
+	c = getClientFromPool()
+	c.Transport = r.clientTransport
+	c.CheckRedirect = r.clientCheckRedirect
+	c.Jar = r.clientCookieJar
+	c.Timeout = r.clientTimeout
+
+	return c, func(client *http.Client) {
+		putClientToPool(client)
+	}
+}
+
+func (r *Request) Do(method, url string, body io.Reader) (*response.Response, error) {
+	c, putBack := r.newHttpClient()
+	defer putBack(c)
+
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	return response.New(resp), nil
+}
+
+func New(options ...Option) *Request {
+	req := &Request{
+		ctx:                 nil,
+		retry:               0,
+		clientTimeout:       0,
+		headers:             nil,
+		clientCookieJar:     nil,
+		clientTransport:     nil,
+		clientCheckRedirect: nil,
+		sign:                0,
+	}
+	return req.Options(options...)
+}
