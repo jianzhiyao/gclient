@@ -66,7 +66,11 @@ func DisableBr() Option {
 
 func EnableCookie(options *cookiejar.Options) Option {
 	return func(req *Request) {
-		req.clientCookieJar, _ = cookiejar.New(options)
+		var err error
+		req.clientCookieJar, err = cookiejar.New(options)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -76,9 +80,9 @@ func DisableCookie() Option {
 	}
 }
 
-func EnableTransport(transport *http.Transport) Option {
+func EnableTransport(roundTripper http.RoundTripper) Option {
 	return func(req *Request) {
-		req.clientTransport = transport
+		req.clientTransport = roundTripper
 	}
 }
 
@@ -108,7 +112,7 @@ func Retry(times int) Option {
 
 func enableSign(t Sign) Option {
 	return func(req *Request) {
-		req.sign &= int8(t)
+		req.sign |= int8(t)
 	}
 }
 

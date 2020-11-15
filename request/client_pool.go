@@ -12,7 +12,12 @@ func init() {
 	httpClientOnce.Do(func() {
 		httpClientPool = &sync.Pool{
 			New: func() interface{} {
-				return &http.Client{}
+				return &http.Client{
+					Transport:     nil,
+					CheckRedirect: nil,
+					Jar:           nil,
+					Timeout:       0,
+				}
 			},
 		}
 	})
@@ -20,7 +25,6 @@ func init() {
 
 func getClientFromPool() *http.Client {
 	cli := httpClientPool.Get().(*http.Client)
-
 	return cli
 }
 

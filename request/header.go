@@ -3,6 +3,7 @@ package request
 const (
 	HeaderUserAgent        = `User-Agent`
 	HeaderContentEncoding  = `Content-Encoding`
+	HeaderAcceptEncoding   = `Accept-Encoding`
 	HeaderContentType      = `Content-Type`
 	HeaderTransferEncoding = `Transfer-Encoding`
 
