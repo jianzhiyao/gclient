@@ -88,6 +88,10 @@ func (r *Response) String() (string, error) {
 	return string(b), nil
 }
 
+func (r *Response) Bytes() ([]byte, error) {
+	return r.readBytes()
+}
+
 func (r *Response) Header(key string) string {
 	return r.resp.Header.Get(key)
 }

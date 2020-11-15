@@ -2,7 +2,9 @@ package request
 
 import (
 	"context"
+	"github.com/jianzhiyao/gclient/structs"
 	"net/http"
+	"strings"
 	"testing"
 	"time"
 )
@@ -22,6 +24,30 @@ func TestOptEnableBr(t *testing.T) {
 
 	if req.sign&int8(SignBr) == 0 {
 		t.Error()
+		return
+	}
+}
+
+func TestOptEnableBr2(t *testing.T) {
+	req := New(
+		OptEnableBr(),
+	)
+	url := `https://cn.bing.com`
+
+	resp, err := req.Do(http.MethodGet, url, nil)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if !strings.Contains(resp.Header(HeaderContentEncoding), structs.ContentEncodingBr) {
+		t.Error()
+		return
+	}
+
+	_,err = resp.String()
+	if err != nil {
+		t.Error(err)
 		return
 	}
 }
@@ -47,6 +73,29 @@ func TestOptEnableGzip(t *testing.T) {
 	}
 }
 
+func TestOptEnableGzip2(t *testing.T) {
+	req := New(
+		OptEnableGzip(),
+	)
+	url := `https://cn.bing.com`
+
+	resp, err := req.Do(http.MethodGet, url, nil)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if !strings.Contains(resp.Header(HeaderContentEncoding), structs.ContentEncodingGzip) {
+		t.Error()
+		return
+	}
+	_,err = resp.String()
+	if err != nil {
+		t.Error(err)
+		return
+	}
+}
+
 func TestOptDisableGzip(t *testing.T) {
 	req := New(
 		OptEnableGzip(),
@@ -64,6 +113,29 @@ func TestOptEnableDeflate(t *testing.T) {
 
 	if req.sign&int8(SignDeflate) == 0 {
 		t.Error()
+		return
+	}
+}
+
+func TestOptEnableDeflate2(t *testing.T) {
+	req := New(
+		OptEnableDeflate(),
+	)
+	url := `https://cn.bing.com`
+
+	resp, err := req.Do(http.MethodGet, url, nil)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if !strings.Contains(resp.Header(HeaderContentEncoding), structs.ContentEncodingDeflate) {
+		t.Error()
+		return
+	}
+	_,err = resp.String()
+	if err != nil {
+		t.Error(err)
 		return
 	}
 }
@@ -102,9 +174,9 @@ func TestOptCookieJar(t *testing.T) {
 	}
 }
 
-func TestOptEnableCheckRedirect(t *testing.T) {
+func TestOptCheckRedirectHandler(t *testing.T) {
 	req := New(
-		OptEnableCheckRedirect(func(req *http.Request, via []*http.Request) error {
+		OptCheckRedirectHandler(func(req *http.Request, via []*http.Request) error {
 			return nil
 		}),
 	)

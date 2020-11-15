@@ -8,6 +8,7 @@ import (
 var httpClientPool *sync.Pool
 var httpClientOnce sync.Once
 
+type ReturnHttpClient func(client *http.Client)
 func init() {
 	httpClientOnce.Do(func() {
 		httpClientPool = &sync.Pool{
@@ -23,9 +24,9 @@ func init() {
 	})
 }
 
-func getClientFromPool() *http.Client {
+func getClientFromPool() (*http.Client,ReturnHttpClient) {
 	cli := httpClientPool.Get().(*http.Client)
-	return cli
+	return cli,putClientToPool
 }
 
 func putClientToPool(cli *http.Client) {

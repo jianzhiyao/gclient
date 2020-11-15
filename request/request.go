@@ -2,7 +2,6 @@ package request
 
 import (
 	"context"
-	"fmt"
 	"github.com/jianzhiyao/gclient/response"
 	"github.com/jianzhiyao/gclient/structs"
 	"io"
@@ -51,14 +50,14 @@ func (r *Request) Options(options ...Option) *Request {
 	return r
 }
 
-func (r *Request) newHttpClient() (c *http.Client, putBack func(client *http.Client)) {
-	c = getClientFromPool()
+func (r *Request) newHttpClient() (c *http.Client, returnBack ReturnHttpClient) {
+	c, returnBack = getClientFromPool()
 	c.Transport = r.clientTransport
 	c.CheckRedirect = r.clientCheckRedirect
 	c.Jar = r.clientCookieJar
 	c.Timeout = r.clientTimeout
 
-	return c, putClientToPool
+	return
 }
 
 func (r *Request) Do(method, url string, body io.Reader) (*response.Response, error) {
@@ -66,8 +65,8 @@ func (r *Request) Do(method, url string, body io.Reader) (*response.Response, er
 		resp *http.Response
 		err  error
 	)
-	c, putBack := r.newHttpClient()
-	defer putBack(c)
+	c, returnBack := r.newHttpClient()
+	defer returnBack(c)
 
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
@@ -96,7 +95,6 @@ func (r *Request) Do(method, url string, body io.Reader) (*response.Response, er
 	if tryCount <= 1 {
 		tryCount = 1
 	}
-	fmt.Println(`c.Timeout`,c.Timeout)
 	for tryCount > 0 {
 		resp, err = c.Do(req)
 		if err != nil {
@@ -115,12 +113,19 @@ func New(options ...Option) *Request {
 	req := &Request{
 		ctx:                 nil,
 		retry:               0,
-		clientTimeout:       0,
 		headers:             make(map[string]string),
 		clientCookieJar:     nil,
 		clientTransport:     nil,
 		clientCheckRedirect: nil,
+		clientTimeout:       0,
 		sign:                0,
 	}
+
+	req.Options(
+		OptCookieJar(nil),
+		OptTransport(nil),
+		OptCheckRedirectHandler(nil),
+	)
+
 	return req.Options(options...)
 }
