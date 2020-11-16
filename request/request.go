@@ -23,7 +23,7 @@ func New(method, url string) (*Request, error) {
 	case http.MethodPut:
 	case http.MethodTrace:
 	default:
-		return nil, errors.New("Not a valid http method")
+		return nil, errors.New("not a valid http method")
 	}
 	return &Request{
 		method:  method,
