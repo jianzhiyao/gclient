@@ -1,4 +1,4 @@
-package client
+package gclient
 
 import (
 	"net/http"
@@ -24,9 +24,9 @@ func init() {
 	})
 }
 
-func getClientFromPool() (*http.Client,ReturnHttpClient) {
+func getClientFromPool() (*http.Client, ReturnHttpClient) {
 	cli := httpClientPool.Get().(*http.Client)
-	return cli,putClientToPool
+	return cli, putClientToPool
 }
 
 func putClientToPool(cli *http.Client) {
