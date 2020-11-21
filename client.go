@@ -6,7 +6,6 @@ import (
 	"github.com/jianzhiyao/gclient/response"
 	"io"
 	"net/http"
-	"net/http/cookiejar"
 	"strings"
 	"time"
 )
@@ -26,13 +25,24 @@ type Client struct {
 	//Client level headers
 	headers map[string]string
 
-	clientCookieJar     *cookiejar.Jar
+	clientCookieJar     http.CookieJar
 	clientTransport     http.RoundTripper
 	clientCheckRedirect CheckRedirectHandler
 	clientTimeout       time.Duration
 
 	sign int8
 }
+
+func New(options ...Option) *Client {
+	c := &Client{
+		headers: make(map[string]string),
+	}
+
+	c.Options(options...)
+
+	return c
+}
+
 
 func (r *Client) Option(option Option) *Client {
 	option(r)
@@ -107,25 +117,4 @@ func (r *Client) Do(method, url string, body io.Reader) (*response.Response, err
 	}
 
 	return response.New(resp), nil
-}
-
-func New(options ...Option) *Client {
-	req := &Client{
-		ctx:                 nil,
-		retry:               0,
-		headers:             make(map[string]string),
-		clientCookieJar:     nil,
-		clientTransport:     nil,
-		clientCheckRedirect: nil,
-		clientTimeout:       0,
-		sign:                0,
-	}
-
-	req.Options(
-		OptCookieJar(nil),
-		OptTransport(nil),
-		OptCheckRedirectHandler(nil),
-	)
-
-	return req.Options(options...)
 }

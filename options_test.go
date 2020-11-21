@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/jianzhiyao/gclient/consts"
 	"net/http"
+	"net/http/cookiejar"
 	"strings"
 	"testing"
 	"time"
@@ -45,7 +46,7 @@ func TestOptEnableBr2(t *testing.T) {
 		return
 	}
 
-	_,err = resp.String()
+	_, err = resp.String()
 	if err != nil {
 		t.Error(err)
 		return
@@ -89,7 +90,7 @@ func TestOptEnableGzip2(t *testing.T) {
 		t.Error()
 		return
 	}
-	_,err = resp.String()
+	_, err = resp.String()
 	if err != nil {
 		t.Error(err)
 		return
@@ -133,7 +134,7 @@ func TestOptEnableDeflate2(t *testing.T) {
 		t.Error()
 		return
 	}
-	_,err = resp.String()
+	_, err = resp.String()
 	if err != nil {
 		t.Error(err)
 		return
@@ -168,9 +169,24 @@ func TestOptCookieJar(t *testing.T) {
 		OptCookieJar(nil),
 	)
 
-	if req.clientCookieJar == nil {
+	if req.clientCookieJar != nil {
 		t.Error()
 		return
+	}
+}
+
+func TestOptCookieJar1(t *testing.T) {
+	if jar, err := cookiejar.New(nil); err != nil {
+		t.Error()
+		return
+	} else {
+		req := New(
+			OptCookieJar(jar),
+		)
+
+		if req.clientCookieJar == nil {
+
+		}
 	}
 }
 

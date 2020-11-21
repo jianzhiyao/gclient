@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/jianzhiyao/gclient/consts"
 	"net/http"
-	"net/http/cookiejar"
 	"time"
 )
 
@@ -65,13 +64,9 @@ func OptDisableBr() Option {
 	return disableSign(SignBr)
 }
 
-func OptCookieJar(options *cookiejar.Options) Option {
+func OptCookieJar(jar http.CookieJar) Option {
 	return func(req *Client) {
-		var err error
-		req.clientCookieJar, err = cookiejar.New(options)
-		if err != nil {
-			panic(err)
-		}
+		req.clientCookieJar = jar
 	}
 }
 
