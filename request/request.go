@@ -46,6 +46,10 @@ func (r *Request) SetHeader(key string, value string) {
 	r.headers[key] = value
 }
 
+func (r *Request) Url() string {
+	return r.url
+}
+
 func (r *Request) Method() string {
 	return r.method
 }

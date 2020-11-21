@@ -98,4 +98,4 @@ func TestRequest_SetHeader(t *testing.T) {
 	}
 }
 
-
+//todo build request
