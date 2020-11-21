@@ -1,4 +1,4 @@
-package mutipart_form
+package multipart_form
 
 import (
 	"io"

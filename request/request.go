@@ -8,7 +8,7 @@ import (
 	"github.com/jianzhiyao/gclient/consts/content_type"
 	"github.com/jianzhiyao/gclient/consts/transfer_encoding"
 	"github.com/jianzhiyao/gclient/request/form"
-	"github.com/jianzhiyao/gclient/request/mutipart_form"
+	"github.com/jianzhiyao/gclient/request/multipart_form"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -60,6 +60,11 @@ func (r *Request) GetHeaders() map[string]string {
 	return r.headers
 }
 
+func (r *Request) GetHeader(key string) (value string, ok bool) {
+	value, ok = r.headers[key]
+	return
+}
+
 func (r *Request) GetBody() io.Reader {
 	return r.body
 }
@@ -68,6 +73,7 @@ func (r *Request) Json(body interface{}) (err error) {
 	if e := r.Body(body); e != nil {
 		return e
 	}
+
 	r.SetHeader(consts.HeaderContentType, content_type.ApplicationJson)
 	return
 }
@@ -80,12 +86,11 @@ func (r *Request) Xml(body interface{}) (err error) {
 	return
 }
 
-func (r *Request) MultiForm(options ...mutipart_form.Option) (err error) {
-	pr, pw := io.Pipe()
+func (r *Request) MultiForm(options ...multipart_form.Option) (err error) {
+	buffer := &bytes.Buffer{}
 
-	bodyWriter := multipart.NewWriter(pw)
+	bodyWriter := multipart.NewWriter(buffer)
 	defer func() {
-		pw.Close()
 		bodyWriter.Close()
 	}()
 
@@ -95,7 +100,7 @@ func (r *Request) MultiForm(options ...mutipart_form.Option) (err error) {
 		}
 	}
 
-	if e := r.Body(pr); e != nil {
+	if e := r.Body(buffer); e != nil {
 		return
 	}
 
