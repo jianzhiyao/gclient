@@ -6,9 +6,12 @@ import (
 	"errors"
 	"github.com/jianzhiyao/gclient/consts"
 	"github.com/jianzhiyao/gclient/consts/content_type"
+	"github.com/jianzhiyao/gclient/consts/transfer_encoding"
+	"github.com/jianzhiyao/gclient/request/form"
 	"github.com/jianzhiyao/gclient/request/mutipart_form"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 )
 
 type Request struct {
@@ -82,11 +85,23 @@ func (r *Request) MultiForm(options ...mutipart_form.Option) (err error) {
 	}
 
 	r.SetHeader(consts.HeaderContentType, bodyWriter.FormDataContentType())
+	r.SetHeader(consts.HeaderTransferEncoding, transfer_encoding.Chunked)
 	return
 }
 
-func (r *Request) Form(options ...mutipart_form.Option) (err error) {
-	return r.MultiForm(options...)
+func (r *Request) Form(options ...form.Option) (err error) {
+	values := url.Values{}
+	for _, option := range options {
+		if e := option(values); e != nil {
+			return e
+		}
+	}
+	if e := r.Body(values.Encode()); e != nil {
+		return
+	}
+
+	r.SetHeader(consts.HeaderContentType, content_type.ApplicationXWwwFormUrlencoded)
+	return
 }
 
 func (r *Request) Body(body interface{}) (err error) {
