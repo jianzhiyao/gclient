@@ -48,16 +48,20 @@ func (r *Request) SetHeader(key string, value string) {
 	r.headers[key] = value
 }
 
-func (r *Request) Url() string {
+func (r *Request) GetUrl() string {
 	return r.url
 }
 
-func (r *Request) Method() string {
+func (r *Request) GetMethod() string {
 	return r.method
 }
 
-func (r *Request) Headers() map[string]string {
+func (r *Request) GetHeaders() map[string]string {
 	return r.headers
+}
+
+func (r *Request) GetBody() io.Reader {
+	return r.body
 }
 
 func (r *Request) Json(body interface{}) (err error) {

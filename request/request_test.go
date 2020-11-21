@@ -51,12 +51,12 @@ func TestRequest_Method(t *testing.T) {
 	method, url := http.MethodPatch, "https://cn.bing.com"
 	req, _ := New(method, url)
 
-	if req.Method() != method {
+	if req.GetMethod() != method {
 		t.Error()
 		return
 	}
 
-	if req.Method() == http.MethodGet {
+	if req.GetMethod() == http.MethodGet {
 		t.Error()
 		return
 	}
@@ -70,7 +70,7 @@ func TestRequest_Headers(t *testing.T) {
 	req.SetHeader("a", "1")
 	req.SetHeader("b", "1")
 
-	if len(req.Headers()) != 2 {
+	if len(req.GetHeaders()) != 2 {
 		t.Error()
 		return
 	}
