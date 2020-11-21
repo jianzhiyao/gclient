@@ -6,6 +6,7 @@ import (
 	"errors"
 	"github.com/jianzhiyao/gclient/consts"
 	"github.com/jianzhiyao/gclient/consts/content_type"
+	"github.com/jianzhiyao/gclient/request/mutipart_form"
 	"mime/multipart"
 	"net/http"
 )
@@ -66,7 +67,7 @@ func (r *Request) Xml(body interface{}) (err error) {
 	return
 }
 
-func (r *Request) MultiForm(options ...FormOption) (err error) {
+func (r *Request) MultiForm(options ...mutipart_form.Option) (err error) {
 	bodyBuffer := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuffer)
 
@@ -84,7 +85,7 @@ func (r *Request) MultiForm(options ...FormOption) (err error) {
 	return
 }
 
-func (r *Request) Form(options ...FormOption) (err error) {
+func (r *Request) Form(options ...mutipart_form.Option) (err error) {
 	return r.MultiForm(options...)
 }
 

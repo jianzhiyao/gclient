@@ -1,4 +1,4 @@
-package request
+package mutipart_form
 
 import (
 	"io"
@@ -6,9 +6,9 @@ import (
 	"os"
 )
 
-type FormOption func(multipartWriter *multipart.Writer) (err error)
+type Option func(multipartWriter *multipart.Writer) (err error)
 
-func File(field, filePath string) FormOption {
+func File(field, filePath string) Option {
 	return func(multipartWriter *multipart.Writer) (err error) {
 
 		fileWriter, err := multipartWriter.CreateFormFile(field, filePath)
@@ -28,14 +28,14 @@ func File(field, filePath string) FormOption {
 	}
 }
 
-func Field(field, value string) FormOption {
+func Field(field, value string) Option {
 	return func(multipartWriter *multipart.Writer) (err error) {
 		err = multipartWriter.WriteField(field, value)
 		return
 	}
 }
 
-func Boundary(boundary string) FormOption {
+func Boundary(boundary string) Option {
 	return func(multipartWriter *multipart.Writer) (err error) {
 		err = multipartWriter.SetBoundary(boundary)
 		return

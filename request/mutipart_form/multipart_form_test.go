@@ -1,4 +1,4 @@
-package request
+package mutipart_form
 
 import (
 	"bytes"
@@ -14,7 +14,7 @@ func TestFile(t *testing.T) {
 
 	filePath1 := `test_files/test_file1.txt`
 	filePath2 := `test_files/test_file2.txt`
-	options := []FormOption{
+	options := []Option{
 		File("file1", filePath1),
 		File("file2", filePath2),
 	}
@@ -40,7 +40,7 @@ func TestField(t *testing.T) {
 
 	uuid1 := uuid.New().String()
 	uuid2 := uuid.New().String()
-	options := []FormOption{
+	options := []Option{
 		Field("id1", uuid1),
 		Field("id2", uuid2),
 	}
@@ -68,7 +68,7 @@ func TestBoundary(t *testing.T) {
 	boundary1 := uuid.New().String()
 	filePath1 := `test_files/test_file1.txt`
 	filePath2 := `test_files/test_file2.txt`
-	options1 := []FormOption{
+	options1 := []Option{
 		Boundary(boundary1),
 		File("file1", filePath1),
 		File("file2", filePath2),
@@ -85,7 +85,7 @@ func TestBoundary(t *testing.T) {
 	}
 
 	boundary2 := uuid.New().String()
-	options2 := []FormOption{
+	options2 := []Option{
 		Boundary(boundary2),
 	}
 
