@@ -1,10 +1,12 @@
 package request
 
 import (
+	"bytes"
 	"encoding"
 	"errors"
 	"github.com/jianzhiyao/gclient/consts"
 	"github.com/jianzhiyao/gclient/consts/content_type"
+	"mime/multipart"
 	"net/http"
 )
 
@@ -64,20 +66,26 @@ func (r *Request) Xml(body interface{}) (err error) {
 	return
 }
 
-func (r *Request) MultiForm(body interface{}) (err error) {
-	if e := r.Body(body); e != nil {
-		return e
+func (r *Request) MultiForm(options ...FormOption) (err error) {
+	bodyBuffer := &bytes.Buffer{}
+	bodyWriter := multipart.NewWriter(bodyBuffer)
+
+	for _, option := range options {
+		if e := option(bodyWriter); e != nil {
+			return e
+		}
 	}
-	r.SetHeader(consts.HeaderContentType, content_type.MultipartFormData)
+
+	if e := r.Body(bodyBuffer.Bytes()); e != nil {
+		return
+	}
+
+	r.SetHeader(consts.HeaderContentType, bodyWriter.FormDataContentType())
 	return
 }
 
-func (r *Request) Form(body interface{}) (err error) {
-	if e := r.Body(body); e != nil {
-		return e
-	}
-	r.SetHeader(consts.HeaderContentType, content_type.ApplicationXWwwFormUrlencoded)
-	return
+func (r *Request) Form(options ...FormOption) (err error) {
+	return r.MultiForm(options...)
 }
 
 func (r *Request) Body(body interface{}) (err error) {

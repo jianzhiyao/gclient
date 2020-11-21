@@ -97,4 +97,3 @@ func TestRequest_SetHeader(t *testing.T) {
 		return
 	}
 }
-
