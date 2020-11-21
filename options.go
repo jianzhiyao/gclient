@@ -2,7 +2,7 @@ package gclient
 
 import (
 	"context"
-	"github.com/jianzhiyao/gclient/structs"
+	"github.com/jianzhiyao/gclient/consts"
 	"net/http"
 	"net/http/cookiejar"
 	"time"
@@ -30,7 +30,7 @@ func OptHeader(key, value string) Option {
 }
 
 func OptUserAgent(ua string) Option {
-	return OptHeader(structs.HeaderUserAgent, ua)
+	return OptHeader(consts.HeaderUserAgent, ua)
 }
 
 func OptHeaders(headers map[string]string) Option {

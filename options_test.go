@@ -2,7 +2,7 @@ package gclient
 
 import (
 	"context"
-	"github.com/jianzhiyao/gclient/structs"
+	"github.com/jianzhiyao/gclient/consts"
 	"net/http"
 	"strings"
 	"testing"
@@ -40,7 +40,7 @@ func TestOptEnableBr2(t *testing.T) {
 		return
 	}
 
-	if !strings.Contains(resp.Header(structs.HeaderContentEncoding), structs.ContentEncodingBr) {
+	if !strings.Contains(resp.Header(consts.HeaderContentEncoding), consts.ContentEncodingBr) {
 		t.Error()
 		return
 	}
@@ -85,7 +85,7 @@ func TestOptEnableGzip2(t *testing.T) {
 		return
 	}
 
-	if !strings.Contains(resp.Header(structs.HeaderContentEncoding), structs.ContentEncodingGzip) {
+	if !strings.Contains(resp.Header(consts.HeaderContentEncoding), consts.ContentEncodingGzip) {
 		t.Error()
 		return
 	}
@@ -129,7 +129,7 @@ func TestOptEnableDeflate2(t *testing.T) {
 		return
 	}
 
-	if !strings.Contains(resp.Header(structs.HeaderContentEncoding), structs.ContentEncodingDeflate) {
+	if !strings.Contains(resp.Header(consts.HeaderContentEncoding), consts.ContentEncodingDeflate) {
 		t.Error()
 		return
 	}
@@ -247,7 +247,7 @@ func TestOptUserAgent(t *testing.T) {
 		OptUserAgent(`server`),
 	)
 
-	if req.headers[structs.HeaderUserAgent] != `server` {
+	if req.headers[consts.HeaderUserAgent] != `server` {
 		t.Error()
 		return
 	}

@@ -7,7 +7,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"github.com/dsnet/compress/brotli"
-	"github.com/jianzhiyao/gclient/structs"
+	"github.com/jianzhiyao/gclient/consts"
 	"gopkg.in/yaml.v2"
 	"io"
 	"io/ioutil"
@@ -32,12 +32,12 @@ func (r *Response) readBytes() ([]byte, error) {
 		reader io.ReadCloser
 		err    error
 	)
-	switch r.resp.Header.Get(structs.HeaderContentEncoding) {
-	case `gzip`:
+	switch r.resp.Header.Get(consts.HeaderContentEncoding) {
+	case consts.ContentEncodingGzip:
 		reader, err = gzip.NewReader(r.resp.Body)
-	case `deflate`:
+	case consts.ContentEncodingDeflate:
 		reader = flate.NewReader(r.resp.Body)
-	case `br`:
+	case consts.ContentEncodingBr:
 		reader, err = brotli.NewReader(r.resp.Body, nil)
 	default:
 		reader = r.resp.Body

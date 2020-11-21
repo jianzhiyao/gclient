@@ -2,8 +2,8 @@ package gclient
 
 import (
 	"context"
+	"github.com/jianzhiyao/gclient/consts"
 	"github.com/jianzhiyao/gclient/response"
-	"github.com/jianzhiyao/gclient/structs"
 	"io"
 	"net/http"
 	"net/http/cookiejar"
@@ -75,16 +75,16 @@ func (r *Client) Do(method, url string, body io.Reader) (*response.Response, err
 
 	var contentEncoding []string
 	if r.sign&int8(SignGzip) != 0 {
-		contentEncoding = append(contentEncoding, structs.ContentEncodingGzip)
+		contentEncoding = append(contentEncoding, consts.ContentEncodingGzip)
 	}
 	if r.sign&int8(SignDeflate) != 0 {
-		contentEncoding = append(contentEncoding, structs.ContentEncodingDeflate)
+		contentEncoding = append(contentEncoding, consts.ContentEncodingDeflate)
 	}
 	if r.sign&int8(SignBr) != 0 {
-		contentEncoding = append(contentEncoding, structs.ContentEncodingBr)
+		contentEncoding = append(contentEncoding, consts.ContentEncodingBr)
 	}
 	if len(contentEncoding) > 0 {
-		r.headers[structs.HeaderAcceptEncoding] = strings.Join(contentEncoding, `, `)
+		r.headers[consts.HeaderAcceptEncoding] = strings.Join(contentEncoding, `, `)
 	}
 
 	for key, value := range r.headers {
