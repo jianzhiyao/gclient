@@ -9,6 +9,8 @@ import (
 	"github.com/jianzhiyao/gclient/consts/transfer_encoding"
 	"github.com/jianzhiyao/gclient/request/form"
 	"github.com/jianzhiyao/gclient/request/mutipart_form"
+	"io"
+	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -18,7 +20,7 @@ type Request struct {
 	method  string
 	url     string
 	headers map[string]string
-	body    []byte
+	body    io.ReadCloser
 }
 
 func New(method, url string) (*Request, error) {
@@ -75,8 +77,13 @@ func (r *Request) Xml(body interface{}) (err error) {
 }
 
 func (r *Request) MultiForm(options ...mutipart_form.Option) (err error) {
-	bodyBuffer := &bytes.Buffer{}
-	bodyWriter := multipart.NewWriter(bodyBuffer)
+	pr, pw := io.Pipe()
+
+	bodyWriter := multipart.NewWriter(pw)
+	defer func() {
+		pw.Close()
+		bodyWriter.Close()
+	}()
 
 	for _, option := range options {
 		if e := option(bodyWriter); e != nil {
@@ -84,7 +91,7 @@ func (r *Request) MultiForm(options ...mutipart_form.Option) (err error) {
 		}
 	}
 
-	if e := r.Body(bodyBuffer.Bytes()); e != nil {
+	if e := r.Body(pr); e != nil {
 		return
 	}
 
@@ -109,16 +116,28 @@ func (r *Request) Form(options ...form.Option) (err error) {
 }
 
 func (r *Request) Body(body interface{}) (err error) {
+	var reader io.Reader
 	switch body := body.(type) {
 	case []byte:
-		r.body = body
+		reader = bytes.NewReader(body)
 	case string:
-		r.body = []byte(body)
+		reader = bytes.NewReader([]byte(body))
 	case encoding.BinaryMarshaler:
-		r.body, err = body.MarshalBinary()
+		if bodyBytes, e := body.MarshalBinary(); e != nil {
+			err = e
+		} else {
+			reader = bytes.NewReader(bodyBytes)
+		}
+	case io.Reader:
+		reader = body
 	default:
 		err = ErrCanNotMarshal
 	}
+
+	if err != nil {
+		return
+	}
+	r.body = ioutil.NopCloser(reader)
 
 	return
 }
