@@ -35,7 +35,7 @@ func TestOptEnableBr2(t *testing.T) {
 	)
 	url := `https://cn.bing.com`
 
-	resp, err := req.Do(http.MethodGet, url, nil)
+	resp, err := req.Do(http.MethodGet, url)
 	if err != nil {
 		t.Error(err)
 		return
@@ -80,7 +80,7 @@ func TestOptEnableGzip2(t *testing.T) {
 	)
 	url := `https://cn.bing.com`
 
-	resp, err := req.Do(http.MethodGet, url, nil)
+	resp, err := req.Do(http.MethodGet, url)
 	if err != nil {
 		t.Error(err)
 		return
@@ -124,7 +124,7 @@ func TestOptEnableDeflate2(t *testing.T) {
 	)
 	url := `https://cn.bing.com`
 
-	resp, err := req.Do(http.MethodGet, url, nil)
+	resp, err := req.Do(http.MethodGet, url)
 	if err != nil {
 		t.Error(err)
 		return
