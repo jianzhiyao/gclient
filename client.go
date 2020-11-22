@@ -3,6 +3,7 @@ package gclient
 import (
 	"context"
 	"github.com/jianzhiyao/gclient/consts"
+	"github.com/jianzhiyao/gclient/request"
 	"github.com/jianzhiyao/gclient/response"
 	"io"
 	"net/http"
@@ -68,7 +69,20 @@ func (r *Client) newHttpClient() (c *http.Client, returnBack ReturnHttpClient) {
 	return
 }
 
-func (r *Client) Do(method, url string, body io.Reader) (*response.Response, error) {
+func (r *Client) Do(method, url string) (*response.Response, error) {
+	return r.do(method, url, nil, nil)
+}
+
+func (r *Client) DoRequest(req request.Request) (*response.Response, error) {
+	return r.do(
+		req.GetMethod(),
+		req.GetUrl(),
+		req.GetBody(),
+		req.GetHeaders(),
+	)
+}
+
+func (r *Client) do(method, url string, body io.Reader, headers http.Header) (*response.Response, error) {
 	var (
 		resp *http.Response
 		err  error
@@ -96,7 +110,12 @@ func (r *Client) Do(method, url string, body io.Reader) (*response.Response, err
 	}
 
 	//set request headers
+	//header from client
 	req.Header = r.headers
+	//header from request
+	for key, header := range headers {
+		req.Header[key] = header
+	}
 
 	tryCount := r.retry
 	if tryCount <= 1 {
