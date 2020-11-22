@@ -2,8 +2,10 @@ package multipart_form
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/google/uuid"
 	"mime/multipart"
+	"os"
 	"strings"
 	"testing"
 )
@@ -12,8 +14,25 @@ func TestFile(t *testing.T) {
 	bodyBuffer := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuffer)
 
-	filePath1 := `test_files/test_file1.txt`
-	filePath2 := `test_files/test_file2.txt`
+	filePath1 := fmt.Sprintf(`%s.txt`, uuid.New().String())
+	filePath2 := fmt.Sprintf(`%s.txt`, uuid.New().String())
+
+	file1, _ := os.Create(filePath1)
+	file2, _ := os.Create(filePath2)
+
+	content1 := uuid.New().String()
+	content2 := uuid.New().String()
+	_, _ = fmt.Fprintln(file1, content1)
+	_, _ = fmt.Fprintln(file2, content2)
+
+	defer func() {
+		file1.Close()
+		os.Remove(file1.Name())
+
+		file2.Close()
+		os.Remove(file2.Name())
+	}()
+
 	options := []Option{
 		File("file1", filePath1),
 		File("file2", filePath2),
@@ -29,6 +48,16 @@ func TestFile(t *testing.T) {
 	}
 
 	if !strings.Contains(bodyBuffer.String(), filePath2) {
+		t.Error()
+		return
+	}
+
+	if !strings.Contains(bodyBuffer.String(), content1) {
+		t.Error()
+		return
+	}
+
+	if !strings.Contains(bodyBuffer.String(), content2) {
 		t.Error()
 		return
 	}
@@ -65,9 +94,25 @@ func TestBoundary(t *testing.T) {
 	bodyBuffer := &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuffer)
 
+	filePath1 := fmt.Sprintf(`%s.txt`, uuid.New().String())
+	filePath2 := fmt.Sprintf(`%s.txt`, uuid.New().String())
+
+	file1, _ := os.Create(filePath1)
+	file2, _ := os.Create(filePath2)
+
+	content1 := uuid.New().String()
+	content2 := uuid.New().String()
+	_, _ = fmt.Fprintln(file1, content1)
+	_, _ = fmt.Fprintln(file2, content2)
+	defer func() {
+		file1.Close()
+		os.Remove(file1.Name())
+
+		file2.Close()
+		os.Remove(file2.Name())
+	}()
+
 	boundary1 := uuid.New().String()
-	filePath1 := `test_files/test_file1.txt`
-	filePath2 := `test_files/test_file2.txt`
 	options1 := []Option{
 		Boundary(boundary1),
 		File("file1", filePath1),

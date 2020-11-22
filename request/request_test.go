@@ -14,6 +14,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"testing"
@@ -372,13 +373,21 @@ func TestRequest_MultiForm(t *testing.T) {
 	method, url := http.MethodPost, "https://cn.bing.com"
 	req, _ := New(method, url)
 
+	filePath1 := fmt.Sprintf(`%s.txt`, uuid.New().String())
+	file1, _ := os.Create(filePath1)
+	content1 := uuid.New().String()
+	_, _ = fmt.Fprintln(file1, content1)
+	defer func() {
+		file1.Close()
+		os.Remove(file1.Name())
+	}()
+
 	bd := uuid.New().String()
 	uid := uuid.New().String()
-	filePath := `multipart_form/test_files/test_file1.txt`
 	err := req.MultiForm(
 		multipart_form.Boundary(bd),
 		multipart_form.Field("uuid", uid),
-		multipart_form.File("file", filePath),
+		multipart_form.File("file", filePath1),
 	)
 	if err != nil {
 		t.Error(err)
@@ -409,7 +418,11 @@ func TestRequest_MultiForm(t *testing.T) {
 			t.Error(strBody)
 			return
 		}
-		if !strings.Contains(strBody, fmt.Sprint(filePath)) {
+		if !strings.Contains(strBody, fmt.Sprint(filePath1)) {
+			t.Error(strBody)
+			return
+		}
+		if !strings.Contains(strBody, fmt.Sprint(content1)) {
 			t.Error(strBody)
 			return
 		}
