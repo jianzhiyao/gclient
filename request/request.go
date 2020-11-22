@@ -87,20 +87,21 @@ func (r *Request) Xml(body interface{}) (err error) {
 }
 
 func (r *Request) MultiForm(options ...multipart_form.Option) (err error) {
-	buffer := &bytes.Buffer{}
+	pr, pw := io.Pipe()
 
-	bodyWriter := multipart.NewWriter(buffer)
-	defer func() {
-		bodyWriter.Close()
+	bodyWriter := multipart.NewWriter(pw)
+
+	go func() {
+		defer func() {
+			bodyWriter.Close()
+			pw.Close()
+		}()
+		for _, option := range options {
+			_ = option(bodyWriter)
+		}
 	}()
 
-	for _, option := range options {
-		if e := option(bodyWriter); e != nil {
-			return e
-		}
-	}
-
-	if e := r.Body(buffer); e != nil {
+	if e := r.Body(pr); e != nil {
 		return
 	}
 

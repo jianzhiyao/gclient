@@ -11,9 +11,11 @@ import (
 	"github.com/jianzhiyao/gclient/consts/content_type"
 	"github.com/jianzhiyao/gclient/request/form"
 	"github.com/jianzhiyao/gclient/request/multipart_form"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -383,12 +385,22 @@ func TestRequest_MultiForm(t *testing.T) {
 		return
 	}
 
-	if body, err := ioutil.ReadAll(req.GetBody()); err != nil {
-		t.Error(err)
-		return
-	} else {
-		strBody := string(body)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		var body []byte
+		tmpBytes := make([]byte, 128)
+		for {
+			if count, err := req.GetBody().Read(tmpBytes); err != io.EOF {
+				for i := 0; i < count; i++ {
+					body = append(body, tmpBytes[i])
+				}
+			} else {
+				break
+			}
+		}
 
+		strBody := string(body)
 		if strings.Count(strBody, fmt.Sprint(bd)) != 3 {
 			t.Error(strBody)
 			return
@@ -401,6 +413,9 @@ func TestRequest_MultiForm(t *testing.T) {
 			t.Error(strBody)
 			return
 		}
-	}
 
+		wg.Done()
+	}()
+
+	wg.Wait()
 }
