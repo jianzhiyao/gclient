@@ -113,8 +113,6 @@ func TestRequest_SetHeader(t *testing.T) {
 	}
 }
 
-//todo build request
-
 func TestRequest_Body(t *testing.T) {
 	method, url := http.MethodPatch, "https://cn.bing.com"
 	req, _ := New(method, url)
@@ -378,8 +376,8 @@ func TestRequest_MultiForm(t *testing.T) {
 	content1 := uuid.New().String()
 	_, _ = fmt.Fprintln(file1, content1)
 	defer func() {
-		file1.Close()
-		os.Remove(file1.Name())
+		_ = file1.Close()
+		_ = os.Remove(file1.Name())
 	}()
 
 	bd := uuid.New().String()

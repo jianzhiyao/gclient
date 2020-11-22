@@ -105,11 +105,11 @@ func TestBoundary(t *testing.T) {
 	_, _ = fmt.Fprintln(file1, content1)
 	_, _ = fmt.Fprintln(file2, content2)
 	defer func() {
-		file1.Close()
-		os.Remove(file1.Name())
+		_ = file1.Close()
+		_ = os.Remove(file1.Name())
 
-		file2.Close()
-		os.Remove(file2.Name())
+		_ = file2.Close()
+		_ = os.Remove(file2.Name())
 	}()
 
 	boundary1 := uuid.New().String()
