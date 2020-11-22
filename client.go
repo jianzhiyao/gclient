@@ -6,7 +6,6 @@ import (
 	"github.com/jianzhiyao/gclient/response"
 	"io"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -23,7 +22,7 @@ type Client struct {
 
 	retry int
 	//Client level headers
-	headers map[string]string
+	headers http.Header
 
 	clientCookieJar     http.CookieJar
 	clientTransport     http.RoundTripper
@@ -35,14 +34,13 @@ type Client struct {
 
 func New(options ...Option) *Client {
 	c := &Client{
-		headers: make(map[string]string),
+		headers: http.Header{},
 	}
 
 	c.Options(options...)
 
 	return c
 }
-
 
 func (r *Client) Option(option Option) *Client {
 	option(r)
@@ -94,12 +92,11 @@ func (r *Client) Do(method, url string, body io.Reader) (*response.Response, err
 		contentEncoding = append(contentEncoding, consts.ContentEncodingBr)
 	}
 	if len(contentEncoding) > 0 {
-		r.headers[consts.HeaderAcceptEncoding] = strings.Join(contentEncoding, `, `)
+		r.headers[consts.HeaderAcceptEncoding] = contentEncoding
 	}
 
-	for key, value := range r.headers {
-		req.Header.Set(key, value)
-	}
+	//set request headers
+	req.Header = r.headers
 
 	tryCount := r.retry
 	if tryCount <= 1 {

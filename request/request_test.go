@@ -239,7 +239,7 @@ func TestRequest_Form(t *testing.T) {
 	}
 
 	if value, ok := req.GetHeader(consts.HeaderContentType); ok {
-		if value != content_type.ApplicationXWwwFormUrlencoded {
+		if value[0] != content_type.ApplicationXWwwFormUrlencoded {
 			t.Error(value)
 			return
 		}
@@ -298,7 +298,7 @@ func TestRequest_Json(t *testing.T) {
 	}
 
 	if value, ok := req.GetHeader(consts.HeaderContentType); ok {
-		if value != content_type.ApplicationJson {
+		if value[0] != content_type.ApplicationJson {
 			t.Error(value)
 			return
 		}
@@ -357,7 +357,7 @@ func TestRequest_Xml(t *testing.T) {
 	}
 
 	if value, ok := req.GetHeader(consts.HeaderContentType); ok {
-		if value != content_type.ApplicationXml {
+		if value[0] != content_type.ApplicationXml {
 			t.Error(value)
 			return
 		}

@@ -210,15 +210,15 @@ func TestOptHeader(t *testing.T) {
 		OptHeader(`e`, `f`),
 	)
 
-	if req.headers[`a`] != `b` {
+	if req.headers[`a`][0] != `b` {
 		t.Error()
 		return
 	}
-	if req.headers[`c`] != `d` {
+	if req.headers[`c`][0] != `d` {
 		t.Error()
 		return
 	}
-	if req.headers[`e`] != `f` {
+	if req.headers[`e`][0] != `f` {
 		t.Error()
 		return
 	}
@@ -226,22 +226,22 @@ func TestOptHeader(t *testing.T) {
 
 func TestOptHeaders(t *testing.T) {
 	req := New(
-		OptHeaders(map[string]string{
-			`a`: `b`,
-			`c`: `d`,
-			`e`: `f`,
+		OptHeaders(map[string][]string{
+			`a`: {`b`},
+			`c`: {`d`},
+			`e`: {`f`},
 		}),
 	)
 
-	if req.headers[`a`] != `b` {
+	if req.headers[`a`][0] != `b` {
 		t.Error()
 		return
 	}
-	if req.headers[`c`] != `d` {
+	if req.headers[`c`][0] != `d` {
 		t.Error()
 		return
 	}
-	if req.headers[`e`] != `f` {
+	if req.headers[`e`][0] != `f` {
 		t.Error()
 		return
 	}
@@ -263,7 +263,7 @@ func TestOptUserAgent(t *testing.T) {
 		OptUserAgent(`server`),
 	)
 
-	if req.headers[consts.HeaderUserAgent] != `server` {
+	if req.headers[consts.HeaderUserAgent][0] != `server` {
 		t.Error()
 		return
 	}

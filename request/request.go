@@ -19,7 +19,7 @@ import (
 type Request struct {
 	method  string
 	url     string
-	headers map[string]string
+	headers http.Header
 	body    io.ReadCloser
 }
 
@@ -40,11 +40,11 @@ func New(method, url string) (*Request, error) {
 	return &Request{
 		method:  method,
 		url:     url,
-		headers: make(map[string]string),
+		headers: http.Header{},
 	}, nil
 }
 
-func (r *Request) SetHeader(key string, value string) {
+func (r *Request) SetHeader(key string, value ...string) {
 	r.headers[key] = value
 }
 
@@ -56,11 +56,11 @@ func (r *Request) GetMethod() string {
 	return r.method
 }
 
-func (r *Request) GetHeaders() map[string]string {
+func (r *Request) GetHeaders() http.Header {
 	return r.headers
 }
 
-func (r *Request) GetHeader(key string) (value string, ok bool) {
+func (r *Request) GetHeader(key string) (value []string, ok bool) {
 	value, ok = r.headers[key]
 	return
 }

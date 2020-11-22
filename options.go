@@ -22,7 +22,7 @@ func OptContext(ctx context.Context) Option {
 	}
 }
 
-func OptHeader(key, value string) Option {
+func OptHeader(key string, value ...string) Option {
 	return func(req *Client) {
 		req.headers[key] = value
 	}
@@ -32,7 +32,7 @@ func OptUserAgent(ua string) Option {
 	return OptHeader(consts.HeaderUserAgent, ua)
 }
 
-func OptHeaders(headers map[string]string) Option {
+func OptHeaders(headers map[string][]string) Option {
 	return func(req *Client) {
 		for key, value := range headers {
 			req.headers[key] = value
