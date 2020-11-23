@@ -1,2 +1,2 @@
 # gclient
-http.Client & http.Request implements for golang
+http.Client & http.Request implementation for golang
