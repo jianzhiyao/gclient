@@ -18,16 +18,19 @@ type Response struct {
 	resp *http.Response
 }
 
-func New(response *http.Response) (*Response,error) {
-	if response ==nil {
-		return nil,errors.New("not a valid response")
+func New(response *http.Response) (*Response, error) {
+	if response == nil {
+		return nil, errors.New("not a valid response")
 
 	}
-	return &Response{resp: response},nil
+	return &Response{resp: response}, nil
 }
 
 func (r *Response) Status() string {
 	return r.resp.Status
+}
+func (r *Response) StatusCode() int {
+	return r.resp.StatusCode
 }
 
 func (r *Response) readBytes() ([]byte, error) {
