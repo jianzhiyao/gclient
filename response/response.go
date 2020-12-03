@@ -18,14 +18,19 @@ type Response struct {
 	resp *http.Response
 }
 
-func New(response *http.Response) *Response {
-	return &Response{resp: response}
+func New(response *http.Response) (*Response,error) {
+	if response ==nil {
+		return nil,errors.New("not a valid response")
+
+	}
+	return &Response{resp: response},nil
+}
+
+func (r *Response) Status() string {
+	return r.resp.Status
 }
 
 func (r *Response) readBytes() ([]byte, error) {
-	if r.resp == nil || r.resp.Body == nil {
-		return nil, errors.New(`invalid response`)
-	}
 	defer r.resp.Body.Close()
 
 	var (
