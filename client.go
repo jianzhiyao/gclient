@@ -73,7 +73,7 @@ func (r *Client) Do(method, url string) (*response.Response, error) {
 	return r.do(method, url, nil, nil)
 }
 
-func (r *Client) DoRequest(req request.Request) (*response.Response, error) {
+func (r *Client) DoRequest(req *request.Request) (*response.Response, error) {
 	return r.do(
 		req.GetMethod(),
 		req.GetUrl(),
