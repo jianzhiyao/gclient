@@ -55,7 +55,16 @@ if resp, err := cli.Do(http.MethodHead, "http://exmaple.com/job.json"); err != n
 
 ### Complex request
 ```
-
+if req, err := request.New(http.MethodGet, "https://exmaple.com"); err != nil {
+	fmt.Println(err)
+	} else {
+	var data Data
+	if err := req.Json(&Data{}); err != nil {
+		fmt.Println(err)
+	} else {
+		resp, err := cli.DoRequest(req)
+	}
+}
 ```
 ## Response
 
