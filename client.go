@@ -132,5 +132,5 @@ func (r *Client) do(method, url string, body io.Reader, headers http.Header) (*r
 		return nil, err
 	}
 
-	return response.New(resp), nil
+	return response.New(resp)
 }
