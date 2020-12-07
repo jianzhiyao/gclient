@@ -96,7 +96,17 @@ if body, err := resp.Bytes(); err != nil {
 #### Unmarshal response content as json
 ```
 var a Resp
-if err := resp.XmlUnmarshal(&a); err != nil {
+if err := resp.JsonUnmarshal(&a); err != nil {
+	fmt.Println(err)
+} else {
+	fmt.Println(a)
+}
+```
+
+#### Unmarshal response content as yaml
+```
+var a Resp
+if err := resp.YamlUnmarshal(&a); err != nil {
 	fmt.Println(err)
 } else {
 	fmt.Println(a)

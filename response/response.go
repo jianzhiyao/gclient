@@ -34,6 +34,9 @@ func (r *Response) StatusCode() int {
 }
 
 func (r *Response) readBytes() ([]byte, error) {
+	if r.resp.Body == nil {
+		return nil, errors.New("invalid response body")
+	}
 	defer r.resp.Body.Close()
 
 	var (
