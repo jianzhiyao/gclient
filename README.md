@@ -21,11 +21,11 @@ cli := gclient.New(
 		gclient.OptTimeout(3*time.Second),
 		//retry if get error after requesting
 		gclient.OptRetry(3),
-		//enable response: br
+		//enable compression: br
 		gclient.OptEnableBr(),
-		//enable response: gzip
+		//enable compression: gzip
 		gclient.OptEnableGzip(),
-		//enable response: gzip
+		//enable compression: deflate
 		gclient.OptEnableDeflate(),
 		//set header for client level
 		gclient.OptHeader("token", "request_token"),
@@ -41,6 +41,8 @@ cli := gclient.New(
 		gclient.OptCookieJar(nil),
 		//set transport for http.Client
 		gclient.OptTransport(nil),
+        //resize worker poll size(default 1000)
+		gclient.OptWorkerPoolSize(5),
 	)
 ```
 
