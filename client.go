@@ -42,10 +42,6 @@ func New(options ...Option) *Client {
 	return c
 }
 
-func NewRequest(method, url string) (*request.Request, error) {
-	return request.New(method, url)
-}
-
 func (r *Client) Option(option Option) *Client {
 	option(r)
 	return r
