@@ -100,7 +100,7 @@ func (r *Client) do(method, url string, body io.Reader, headers http.Header) (*r
 
 	//set request headers
 	//header from client
-	req.Header = r.headers
+	req.Header = r.headers.Clone()
 	//header from request
 	for key, header := range headers {
 		req.Header[key] = header
