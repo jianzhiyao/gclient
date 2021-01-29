@@ -82,9 +82,18 @@ func OptCheckRedirectHandler(clientCheckRedirect CheckRedirectHandler) Option {
 	}
 }
 
+//OptRetry set retry time of requests in one client
 func OptRetry(times int) Option {
 	return func(req *Client) {
 		req.retry = times
+	}
+}
+
+//OptWorkerPoolSize resize worker pool size
+//default size is 1000
+func OptWorkerPoolSize(size int) Option {
+	return func(req *Client) {
+		req.pool.Tune(size)
 	}
 }
 

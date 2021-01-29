@@ -2,13 +2,15 @@ language: go
 
 go:
   - "1.14.x"
+  - "1.15.x"
+services:
+  - nginx
 env:
   global:
     - GO_REPO_FULLNAME="github.com/jianzhiyao/gclient"
   matrix:
-    - TEST_EXAMPLE=1
-    - TEST_EXAMPLE=2
-    - TEST_EXAMPLE=3
+    - TEST_TARGET=https://google.com
+    - TEST_TARGET=https://bing.com
 before_install:
   # link the local repo with ${GOPATH}/src/<namespace>/<repo>
   - GO_REPO_NAMESPACE=${GO_REPO_FULLNAME%/*}
@@ -25,4 +27,4 @@ after_script:
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 script:
-  - go test -coverprofile=coverage.txt -covermode=atomic ./...
+  - go test -coverprofile=coverage.txt -covermode=atomic -bench=. -benchmem ./...

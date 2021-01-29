@@ -10,13 +10,6 @@ import (
 	"time"
 )
 
-func init() {
-	pool, _ = ants.NewPool(
-		1024,
-		ants.WithNonblocking(false),
-	)
-}
-
 type Sign int8
 
 const (
@@ -24,8 +17,6 @@ const (
 	SignDeflate Sign = 1 << 1
 	SignBr      Sign = 1 << 2
 )
-
-var pool *ants.Pool
 
 type Client struct {
 	ctx context.Context
@@ -39,12 +30,20 @@ type Client struct {
 	clientCheckRedirect CheckRedirectHandler
 	clientTimeout       time.Duration
 
+	//goroutines pool
+	pool *ants.Pool
+
 	sign int8
 }
 
 func New(options ...Option) *Client {
+	pool, _ := ants.NewPool(
+		1024,
+		ants.WithNonblocking(false),
+	)
 	c := &Client{
 		headers: http.Header{},
+		pool:    pool,
 	}
 
 	c.Options(options...)
@@ -84,7 +83,7 @@ func (r *Client) Do(method, url string) (*response.Response, error) {
 
 func (r *Client) DoRequest(req *request.Request) (resp *response.Response, err error) {
 	c := make(chan bool)
-	_ = pool.Submit(func() {
+	_ = r.pool.Submit(func() {
 		resp, err = r.do(
 			req.GetMethod(),
 			req.GetUrl(),

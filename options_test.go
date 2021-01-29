@@ -5,6 +5,7 @@ import (
 	"github.com/jianzhiyao/gclient/consts"
 	"net/http"
 	"net/http/cookiejar"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -33,7 +34,7 @@ func TestOptEnableBr2(t *testing.T) {
 	req := New(
 		OptEnableBr(),
 	)
-	url := `https://cn.bing.com`
+	url := os.Getenv(`TEST_TARGET`)
 
 	resp, err := req.Do(http.MethodGet, url)
 	if err != nil {
@@ -78,7 +79,7 @@ func TestOptEnableGzip2(t *testing.T) {
 	req := New(
 		OptEnableGzip(),
 	)
-	url := `https://cn.bing.com`
+	url := os.Getenv(`TEST_TARGET`)
 
 	resp, err := req.Do(http.MethodGet, url)
 	if err != nil {
@@ -122,7 +123,7 @@ func TestOptEnableDeflate2(t *testing.T) {
 	req := New(
 		OptEnableDeflate(),
 	)
-	url := `https://cn.bing.com`
+	url := os.Getenv(`TEST_TARGET`)
 
 	resp, err := req.Do(http.MethodGet, url)
 	if err != nil {
@@ -275,6 +276,17 @@ func TestOptTimeout(t *testing.T) {
 	)
 
 	if req.clientTimeout != 878*time.Second {
+		t.Error()
+		return
+	}
+}
+
+func TestOptWorkerPoolSize(t *testing.T) {
+	req := New(
+		OptWorkerPoolSize(12543),
+	)
+
+	if req.pool.Cap() != 12543 {
 		t.Error()
 		return
 	}

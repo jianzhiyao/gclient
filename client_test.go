@@ -2,6 +2,7 @@ package gclient
 
 import (
 	"net/http"
+	"os"
 	"sync"
 	"testing"
 	"time"
@@ -43,7 +44,7 @@ func TestClient_Options(t *testing.T) {
 
 func TestClient_Do(t *testing.T) {
 	c := New()
-	url := `https://cn.bing.com`
+	url := os.Getenv(`TEST_TARGET`)
 
 	if resp, err := c.Do(http.MethodGet, url); err != nil {
 		t.Error(err)
@@ -54,7 +55,7 @@ func TestClient_Do(t *testing.T) {
 
 func TestClient_DoRequest(t *testing.T) {
 	c := New()
-	url := `https://cn.bing.com`
+	url := os.Getenv(`TEST_TARGET`)
 
 	if req, err := NewRequest(http.MethodGet, url); err != nil {
 		t.Error(err)
@@ -70,7 +71,7 @@ func TestClient_DoRequest(t *testing.T) {
 
 func BenchmarkClient_GClientGet(b *testing.B) {
 	c := New()
-	url := `https://cn.bing.com`
+	url := os.Getenv(`TEST_TARGET`)
 	var wg sync.WaitGroup
 	wg.Add(b.N)
 	for i := 0; i < b.N; i++ {
@@ -91,7 +92,7 @@ func BenchmarkClient_GClientGet(b *testing.B) {
 
 func BenchmarkClient_HttpClientGet(b *testing.B) {
 	c := &http.Client{}
-	url := `https://cn.bing.com`
+	url := os.Getenv(`TEST_TARGET`)
 	var wg sync.WaitGroup
 	wg.Add(b.N)
 	for i := 0; i < b.N; i++ {
@@ -108,5 +109,4 @@ func BenchmarkClient_HttpClientGet(b *testing.B) {
 		}()
 	}
 	wg.Wait()
-
 }
