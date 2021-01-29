@@ -3,14 +3,12 @@ language: go
 go:
   - "1.14.x"
   - "1.15.x"
-services:
-  - elasticsearch
 env:
   global:
     - GO_REPO_FULLNAME="github.com/jianzhiyao/gclient"
   matrix:
     - TEST_TARGET=https://bing.com
-    - TEST_TARGET=http://127.0.0.1:9300
+    - TEST_TARGET=https://www.google.com
 before_install:
   # link the local repo with ${GOPATH}/src/<namespace>/<repo>
   - GO_REPO_NAMESPACE=${GO_REPO_FULLNAME%/*}
@@ -18,16 +16,9 @@ before_install:
   - mkdir -p ${GOPATH}/src/${GO_REPO_NAMESPACE}
   - ln -sv ${TRAVIS_BUILD_DIR} ${GOPATH}/src/${GO_REPO_FULLNAME}
   - cd ${GOPATH}/src/${GO_REPO_FULLNAME}
-  # run elasticsearch
-  - curl https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.2-amd64.deb -o elasticsearch.deb
-  - sudo dpkg -i --force-confnew elasticsearch.deb
-  - sudo chown -R elasticsearch:elasticsearch /etc/default/elasticsearch
-  - sudo service elasticsearch restart
 install:
   - go version
 before_script:
-  # make sure elasticsearch running
-  - sleep 10
   - go version
 after_script:
   - go version
