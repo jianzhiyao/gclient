@@ -1,5 +1,5 @@
 # gclient
- [![GoDoc](http://godoc.org/github.com/jianzhiyao/gclient?status.svg)](http://godoc.org/github.com/jianzhiyao/gclient) [![Foundation](https://img.shields.io/badge/Golang-Foundation-green.svg)](http://golangfoundation.org) [![Go Report Card](https://goreportcard.com/badge/github.com/jianzhiyao/gclient)](https://goreportcard.com/report/github.com/jianzhiyao/gclient)
+[![Build Status](https://travis-ci.org/jianzhiyao/gclient.svg?branch=master)](https://travis-ci.org/jianzhiyao/gclient)[![GoDoc](http://godoc.org/github.com/jianzhiyao/gclient?status.svg)](http://godoc.org/github.com/jianzhiyao/gclient) [![Foundation](https://img.shields.io/badge/Golang-Foundation-green.svg)](http://golangfoundation.org) [![Go Report Card](https://goreportcard.com/badge/github.com/jianzhiyao/gclient)](https://goreportcard.com/report/github.com/jianzhiyao/gclient)
 
 http.Client & http.Request implementation for golang
 
