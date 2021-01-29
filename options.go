@@ -91,11 +91,39 @@ func OptRetry(times int) Option {
 func enableSign(t Sign) Option {
 	return func(req *Client) {
 		req.sign |= int8(t)
+
+		var contentEncoding []string
+		if req.sign&int8(SignGzip) != 0 {
+			contentEncoding = append(contentEncoding, consts.ContentEncodingGzip)
+		}
+		if req.sign&int8(SignDeflate) != 0 {
+			contentEncoding = append(contentEncoding, consts.ContentEncodingDeflate)
+		}
+		if req.sign&int8(SignBr) != 0 {
+			contentEncoding = append(contentEncoding, consts.ContentEncodingBr)
+		}
+		if len(contentEncoding) > 0 {
+			req.headers[consts.HeaderAcceptEncoding] = contentEncoding
+		}
 	}
 }
 
 func disableSign(t Sign) Option {
 	return func(req *Client) {
 		req.sign ^= int8(t)
+
+		var contentEncoding []string
+		if req.sign&int8(SignGzip) != 0 {
+			contentEncoding = append(contentEncoding, consts.ContentEncodingGzip)
+		}
+		if req.sign&int8(SignDeflate) != 0 {
+			contentEncoding = append(contentEncoding, consts.ContentEncodingDeflate)
+		}
+		if req.sign&int8(SignBr) != 0 {
+			contentEncoding = append(contentEncoding, consts.ContentEncodingBr)
+		}
+		if len(contentEncoding) > 0 {
+			req.headers[consts.HeaderAcceptEncoding] = contentEncoding
+		}
 	}
 }

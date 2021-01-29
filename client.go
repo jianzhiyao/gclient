@@ -2,7 +2,6 @@ package gclient
 
 import (
 	"context"
-	"github.com/jianzhiyao/gclient/consts"
 	"github.com/jianzhiyao/gclient/request"
 	"github.com/jianzhiyao/gclient/response"
 	"io"
@@ -97,20 +96,6 @@ func (r *Client) do(method, url string, body io.Reader, headers http.Header) (*r
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
-	}
-
-	var contentEncoding []string
-	if r.sign&int8(SignGzip) != 0 {
-		contentEncoding = append(contentEncoding, consts.ContentEncodingGzip)
-	}
-	if r.sign&int8(SignDeflate) != 0 {
-		contentEncoding = append(contentEncoding, consts.ContentEncodingDeflate)
-	}
-	if r.sign&int8(SignBr) != 0 {
-		contentEncoding = append(contentEncoding, consts.ContentEncodingBr)
-	}
-	if len(contentEncoding) > 0 {
-		r.headers[consts.HeaderAcceptEncoding] = contentEncoding
 	}
 
 	//set request headers
