@@ -3,12 +3,14 @@ language: go
 go:
   - "1.14.x"
   - "1.15.x"
+services:
+  - docker
 env:
   global:
     - GO_REPO_FULLNAME="github.com/jianzhiyao/gclient"
   matrix:
-    - TEST_TARGET=https://bing.com
-    - TEST_TARGET=https://www.google.com
+    - TEST_TARGET=https://bing.com/
+    - TEST_TARGET=http://127.0.0.1:8080/
 before_install:
   # link the local repo with ${GOPATH}/src/<namespace>/<repo>
   - GO_REPO_NAMESPACE=${GO_REPO_FULLNAME%/*}
@@ -16,9 +18,12 @@ before_install:
   - mkdir -p ${GOPATH}/src/${GO_REPO_NAMESPACE}
   - ln -sv ${TRAVIS_BUILD_DIR} ${GOPATH}/src/${GO_REPO_FULLNAME}
   - cd ${GOPATH}/src/${GO_REPO_FULLNAME}
+  # nginx up
+  - docker run --name nginx191 -d -p 8080:80 nginx:1.9.1
 install:
   - go version
 before_script:
+  - sleep 10
   - go version
 after_script:
   - go version
