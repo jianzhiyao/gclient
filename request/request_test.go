@@ -37,17 +37,14 @@ func TestNew(t *testing.T) {
 		req, err := New(method, url)
 		if err != nil {
 			t.Error(err)
-			return
 		}
 
 		if req.method != method {
 			t.Error(err)
-			return
 		}
 
 		if req.url != url {
 			t.Error(err)
-			return
 		}
 	}
 
@@ -58,7 +55,6 @@ func TestNew2(t *testing.T) {
 	_, err := New(method, url)
 	if err == nil {
 		t.Error(err)
-		return
 	}
 }
 
@@ -68,12 +64,10 @@ func TestRequest_Method(t *testing.T) {
 
 	if req.GetMethod() != method {
 		t.Error()
-		return
 	}
 
 	if req.GetMethod() == http.MethodGet {
 		t.Error()
-		return
 	}
 }
 
@@ -87,7 +81,6 @@ func TestRequest_Headers(t *testing.T) {
 
 	if len(req.GetHeaders()) != 2 {
 		t.Error()
-		return
 	}
 }
 
@@ -101,15 +94,12 @@ func TestRequest_SetHeader(t *testing.T) {
 
 	if _, ok := req.headers["a"]; !ok {
 		t.Error()
-		return
 	}
 	if _, ok := req.headers["b"]; !ok {
 		t.Error()
-		return
 	}
 	if _, ok := req.headers["c"]; ok {
 		t.Error()
-		return
 	}
 }
 
@@ -120,16 +110,13 @@ func TestRequest_Body(t *testing.T) {
 	content := `TestRequest_Body`
 	if err := req.Body(content); err != nil {
 		t.Error(err)
-		return
 	}
 
 	if body, err := ioutil.ReadAll(req.GetBody()); err != nil {
 		t.Error(err)
-		return
 	} else {
 		if string(body) != content {
 			t.Error()
-			return
 		}
 	}
 }
@@ -141,16 +128,13 @@ func TestRequest_Body2(t *testing.T) {
 	content := `TestRequest_Body2`
 	if err := req.Body([]byte(content)); err != nil {
 		t.Error(err)
-		return
 	}
 
 	if body, err := ioutil.ReadAll(req.GetBody()); err != nil {
 		t.Error(err)
-		return
 	} else {
 		if string(body) != content {
 			t.Error()
-			return
 		}
 	}
 }
@@ -162,16 +146,13 @@ func TestRequest_Body3(t *testing.T) {
 	content := `TestRequest_Body3`
 	if err := req.Body(bytes.NewBufferString(content)); err != nil {
 		t.Error(err)
-		return
 	}
 
 	if body, err := ioutil.ReadAll(req.GetBody()); err != nil {
 		t.Error(err)
-		return
 	} else {
 		if string(body) != content {
 			t.Error()
-			return
 		}
 	}
 }
@@ -183,16 +164,13 @@ func TestRequest_Body4(t *testing.T) {
 	content := selfContent(`TestRequest_Body4`)
 	if err := req.Body(&content); err != nil {
 		t.Error(err)
-		return
 	}
 
 	if body, err := ioutil.ReadAll(req.GetBody()); err != nil {
 		t.Error(err)
-		return
 	} else {
 		if string(body) != string(content) {
 			t.Error()
-			return
 		}
 	}
 }
@@ -214,38 +192,31 @@ func TestRequest_Form(t *testing.T) {
 
 	if err != nil {
 		t.Error()
-		return
 	}
 
 	if body, err := ioutil.ReadAll(req.GetBody()); err != nil {
 		t.Error(err)
-		return
 	} else {
 		strBody := string(body)
 
 		t.Log("form", strBody)
 		if !strings.Contains(strBody, `field1=value1`) {
 			t.Error(err)
-			return
 		}
 		if !strings.Contains(strBody, `field2=value2_1`) {
 			t.Error(err)
-			return
 		}
 		if !strings.Contains(strBody, `field2=value2_2`) {
 			t.Error(err)
-			return
 		}
 	}
 
 	if value, ok := req.GetHeader(consts.HeaderContentType); ok {
 		if value[0] != content_type.ApplicationXWwwFormUrlencoded {
 			t.Error(value)
-			return
 		}
 	} else {
 		t.Error()
-		return
 	}
 }
 
@@ -273,38 +244,31 @@ func TestRequest_Json(t *testing.T) {
 	})
 	if err != nil {
 		t.Error()
-		return
 	}
 
 	if body, err := ioutil.ReadAll(req.GetBody()); err != nil {
 		t.Error(err)
-		return
 	} else {
 		strBody := string(body)
 
 		t.Log("json", strBody)
 		if !strings.Contains(strBody, fmt.Sprint(v1)) {
 			t.Error(strBody)
-			return
 		}
 		if !strings.Contains(strBody, fmt.Sprint(v2)) {
 			t.Error(strBody)
-			return
 		}
 		if !strings.Contains(strBody, fmt.Sprint(v3)) {
 			t.Error(strBody)
-			return
 		}
 	}
 
 	if value, ok := req.GetHeader(consts.HeaderContentType); ok {
 		if value[0] != content_type.ApplicationJson {
 			t.Error(value)
-			return
 		}
 	} else {
 		t.Error()
-		return
 	}
 }
 
@@ -332,38 +296,31 @@ func TestRequest_Xml(t *testing.T) {
 	})
 	if err != nil {
 		t.Error()
-		return
 	}
 
 	if body, err := ioutil.ReadAll(req.GetBody()); err != nil {
 		t.Error(err)
-		return
 	} else {
 		strBody := string(body)
 
 		t.Log("xml", strBody)
 		if !strings.Contains(strBody, fmt.Sprint(v1)) {
 			t.Error(strBody)
-			return
 		}
 		if !strings.Contains(strBody, fmt.Sprint(v2)) {
 			t.Error(strBody)
-			return
 		}
 		if !strings.Contains(strBody, fmt.Sprint(v3)) {
 			t.Error(strBody)
-			return
 		}
 	}
 
 	if value, ok := req.GetHeader(consts.HeaderContentType); ok {
 		if value[0] != content_type.ApplicationXml {
 			t.Error(value)
-			return
 		}
 	} else {
 		t.Error()
-		return
 	}
 }
 
@@ -389,7 +346,6 @@ func TestRequest_MultiForm(t *testing.T) {
 	)
 	if err != nil {
 		t.Error(err)
-		return
 	}
 
 	var wg sync.WaitGroup
@@ -410,19 +366,15 @@ func TestRequest_MultiForm(t *testing.T) {
 		strBody := string(body)
 		if strings.Count(strBody, fmt.Sprint(bd)) != 3 {
 			t.Error(strBody)
-			return
 		}
 		if !strings.Contains(strBody, fmt.Sprint(uid)) {
 			t.Error(strBody)
-			return
 		}
 		if !strings.Contains(strBody, fmt.Sprint(filePath1)) {
 			t.Error(strBody)
-			return
 		}
 		if !strings.Contains(strBody, fmt.Sprint(content1)) {
 			t.Error(strBody)
-			return
 		}
 
 		wg.Done()

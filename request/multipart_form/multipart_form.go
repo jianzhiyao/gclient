@@ -8,6 +8,7 @@ import (
 
 type Option func(multipartWriter *multipart.Writer) (err error)
 
+//File set file
 func File(field, filePath string) Option {
 	return func(multipartWriter *multipart.Writer) (err error) {
 
@@ -28,6 +29,7 @@ func File(field, filePath string) Option {
 	}
 }
 
+//Field set field
 func Field(field, value string) Option {
 	return func(multipartWriter *multipart.Writer) (err error) {
 		err = multipartWriter.WriteField(field, value)
@@ -35,6 +37,7 @@ func Field(field, value string) Option {
 	}
 }
 
+//Boundary set boundary
 func Boundary(boundary string) Option {
 	return func(multipartWriter *multipart.Writer) (err error) {
 		err = multipartWriter.SetBoundary(boundary)
