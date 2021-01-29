@@ -23,7 +23,8 @@ type Request struct {
 	body    io.ReadCloser
 }
 
-func New(method, url string) (*Request, error) {
+//New base method of new request
+func New(method, uri string) (*Request, error) {
 	switch method {
 	case http.MethodGet:
 	case http.MethodPost:
@@ -37,9 +38,15 @@ func New(method, url string) (*Request, error) {
 	default:
 		return nil, errors.New("not a valid http method")
 	}
+
+	//check validation of uri
+	if _, err := url.Parse(uri); err != nil {
+		return nil, err
+	}
+
 	return &Request{
 		method:  method,
-		url:     url,
+		url:     uri,
 		headers: http.Header{},
 	}, nil
 }
