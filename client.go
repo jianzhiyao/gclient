@@ -4,10 +4,19 @@ import (
 	"context"
 	"github.com/jianzhiyao/gclient/request"
 	"github.com/jianzhiyao/gclient/response"
+	"github.com/panjf2000/ants/v2"
 	"io"
 	"net/http"
+	"sync"
 	"time"
 )
+
+func init() {
+	pool, _ = ants.NewPool(
+		1024,
+		ants.WithNonblocking(false),
+	)
+}
 
 type Sign int8
 
@@ -16,6 +25,8 @@ const (
 	SignDeflate Sign = 1 << 1
 	SignBr      Sign = 1 << 2
 )
+
+var pool *ants.Pool
 
 type Client struct {
 	ctx context.Context
@@ -72,13 +83,21 @@ func (r *Client) Do(method, url string) (*response.Response, error) {
 	return r.do(method, url, nil, nil)
 }
 
-func (r *Client) DoRequest(req *request.Request) (*response.Response, error) {
-	return r.do(
-		req.GetMethod(),
-		req.GetUrl(),
-		req.GetBody(),
-		req.GetHeaders(),
-	)
+func (r *Client) DoRequest(req *request.Request) (resp *response.Response, err error) {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	_ = pool.Submit(func() {
+		resp, err = r.do(
+			req.GetMethod(),
+			req.GetUrl(),
+			req.GetBody(),
+			req.GetHeaders(),
+		)
+		wg.Done()
+	})
+	wg.Wait()
+	return
+
 }
 
 func (r *Client) do(method, url string, body io.Reader, headers http.Header) (*response.Response, error) {
