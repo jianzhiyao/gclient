@@ -2,6 +2,7 @@ package gclient
 
 import (
 	"net/http"
+	"sync"
 	"testing"
 	"time"
 )
@@ -55,10 +56,57 @@ func TestClient_DoRequest(t *testing.T) {
 	c := New()
 	url := `https://cn.bing.com`
 
-	req, _ := NewRequest(http.MethodGet, url)
-	if resp, err := c.DoRequest(req); err != nil {
+	if req, err := NewRequest(http.MethodGet, url); err != nil {
 		t.Error(err)
-	} else if resp.StatusCode() != http.StatusOK {
-		t.Error()
+	} else {
+		if resp, err := c.DoRequest(req); err != nil {
+			t.Error(err)
+		} else if resp.StatusCode() != http.StatusOK {
+			t.Error(`resp.StatusCode()`, resp.StatusCode())
+		}
 	}
+
+}
+
+func BenchmarkClient_GClientGet(b *testing.B) {
+	c := New()
+	url := `https://cn.bing.com`
+	var wg sync.WaitGroup
+	wg.Add(b.N)
+	for i := 0; i < b.N; i++ {
+		go func() {
+			req, _ := NewRequestGet(url)
+			if resp, err := c.DoRequest(req); err != nil {
+				b.Error(err)
+			} else {
+				if resp == nil || resp.StatusCode() != http.StatusOK {
+					b.Error()
+				}
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+}
+
+func BenchmarkClient_HttpClientGet(b *testing.B) {
+	c := &http.Client{}
+	url := `https://cn.bing.com`
+	var wg sync.WaitGroup
+	wg.Add(b.N)
+	for i := 0; i < b.N; i++ {
+		go func() {
+			req, _ := http.NewRequest(http.MethodGet, url, nil)
+			if resp, err := c.Do(req); err != nil {
+				b.Error(err)
+			} else {
+				if resp == nil || resp.StatusCode != http.StatusOK {
+					b.Error()
+				}
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+
 }
