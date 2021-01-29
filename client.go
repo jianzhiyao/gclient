@@ -7,7 +7,6 @@ import (
 	"github.com/panjf2000/ants/v2"
 	"io"
 	"net/http"
-	"sync"
 	"time"
 )
 
@@ -84,8 +83,7 @@ func (r *Client) Do(method, url string) (*response.Response, error) {
 }
 
 func (r *Client) DoRequest(req *request.Request) (resp *response.Response, err error) {
-	var wg sync.WaitGroup
-	wg.Add(1)
+	c := make(chan bool)
 	_ = pool.Submit(func() {
 		resp, err = r.do(
 			req.GetMethod(),
@@ -93,11 +91,10 @@ func (r *Client) DoRequest(req *request.Request) (resp *response.Response, err e
 			req.GetBody(),
 			req.GetHeaders(),
 		)
-		wg.Done()
+		c <- true
 	})
-	wg.Wait()
+	<-c
 	return
-
 }
 
 func (r *Client) do(method, url string, body io.Reader, headers http.Header) (*response.Response, error) {
