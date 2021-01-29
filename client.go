@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/jianzhiyao/gclient/request"
 	"github.com/jianzhiyao/gclient/response"
+	"github.com/panjf2000/ants/v2"
 	"io"
 	"net/http"
 	"time"
@@ -29,12 +30,20 @@ type Client struct {
 	clientCheckRedirect CheckRedirectHandler
 	clientTimeout       time.Duration
 
+	//goroutines pool
+	pool *ants.Pool
+
 	sign int8
 }
 
 func New(options ...Option) *Client {
+	pool, _ := ants.NewPool(
+		1024,
+		ants.WithNonblocking(false),
+	)
 	c := &Client{
 		headers: http.Header{},
+		pool:    pool,
 	}
 
 	c.Options(options...)
@@ -72,13 +81,19 @@ func (r *Client) Do(method, url string) (*response.Response, error) {
 	return r.do(method, url, nil, nil)
 }
 
-func (r *Client) DoRequest(req *request.Request) (*response.Response, error) {
-	return r.do(
-		req.GetMethod(),
-		req.GetUrl(),
-		req.GetBody(),
-		req.GetHeaders(),
-	)
+func (r *Client) DoRequest(req *request.Request) (resp *response.Response, err error) {
+	c := make(chan bool)
+	_ = r.pool.Submit(func() {
+		resp, err = r.do(
+			req.GetMethod(),
+			req.GetUrl(),
+			req.GetBody(),
+			req.GetHeaders(),
+		)
+		c <- true
+	})
+	<-c
+	return
 }
 
 func (r *Client) do(method, url string, body io.Reader, headers http.Header) (*response.Response, error) {

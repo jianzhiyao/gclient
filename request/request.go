@@ -47,11 +47,14 @@ func New(method, uri string) (*Request, error) {
 	return &Request{
 		method:  method,
 		url:     uri,
-		headers: http.Header{},
+		headers: nil,
 	}, nil
 }
 
 func (r *Request) SetHeader(key string, value ...string) {
+	if r.headers == nil {
+		r.headers = http.Header{}
+	}
 	r.headers[key] = value
 }
 
@@ -68,6 +71,10 @@ func (r *Request) GetHeaders() http.Header {
 }
 
 func (r *Request) GetHeader(key string) (value []string, ok bool) {
+	if r.headers == nil {
+		return
+	}
+
 	value, ok = r.headers[key]
 	return
 }

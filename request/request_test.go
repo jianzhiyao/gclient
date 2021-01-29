@@ -32,7 +32,7 @@ func TestNew(t *testing.T) {
 		http.MethodPut,
 		http.MethodTrace,
 	}
-	url := "https://cn.bing.com"
+	url := os.Getenv(`TEST_TARGET`)
 	for _, method := range methods {
 		req, err := New(method, url)
 		if err != nil {
@@ -51,7 +51,7 @@ func TestNew(t *testing.T) {
 }
 
 func TestNew2(t *testing.T) {
-	method, url := `1`, "https://cn.bing.com"
+	method, url := `1`, os.Getenv(`TEST_TARGET`)
 	_, err := New(method, url)
 	if err == nil {
 		t.Error(err)
@@ -59,7 +59,7 @@ func TestNew2(t *testing.T) {
 }
 
 func TestRequest_Method(t *testing.T) {
-	method, url := http.MethodPatch, "https://cn.bing.com"
+	method, url := http.MethodPatch, os.Getenv(`TEST_TARGET`)
 	req, _ := New(method, url)
 
 	if req.GetMethod() != method {
@@ -72,7 +72,7 @@ func TestRequest_Method(t *testing.T) {
 }
 
 func TestRequest_Headers(t *testing.T) {
-	method, url := http.MethodPatch, "https://cn.bing.com"
+	method, url := http.MethodPatch, os.Getenv(`TEST_TARGET`)
 	req, _ := New(method, url)
 
 	req.SetHeader("a", "1")
@@ -85,7 +85,7 @@ func TestRequest_Headers(t *testing.T) {
 }
 
 func TestRequest_SetHeader(t *testing.T) {
-	method, url := http.MethodPatch, "https://cn.bing.com"
+	method, url := http.MethodPatch, os.Getenv(`TEST_TARGET`)
 	req, _ := New(method, url)
 
 	req.SetHeader("a", "1")
@@ -104,7 +104,7 @@ func TestRequest_SetHeader(t *testing.T) {
 }
 
 func TestRequest_Body(t *testing.T) {
-	method, url := http.MethodPatch, "https://cn.bing.com"
+	method, url := http.MethodPatch, os.Getenv(`TEST_TARGET`)
 	req, _ := New(method, url)
 
 	content := `TestRequest_Body`
@@ -122,7 +122,7 @@ func TestRequest_Body(t *testing.T) {
 }
 
 func TestRequest_Body2(t *testing.T) {
-	method, url := http.MethodPatch, "https://cn.bing.com"
+	method, url := http.MethodPatch, os.Getenv(`TEST_TARGET`)
 	req, _ := New(method, url)
 
 	content := `TestRequest_Body2`
@@ -140,7 +140,7 @@ func TestRequest_Body2(t *testing.T) {
 }
 
 func TestRequest_Body3(t *testing.T) {
-	method, url := http.MethodPatch, "https://cn.bing.com"
+	method, url := http.MethodPatch, os.Getenv(`TEST_TARGET`)
 	req, _ := New(method, url)
 
 	content := `TestRequest_Body3`
@@ -158,7 +158,7 @@ func TestRequest_Body3(t *testing.T) {
 }
 
 func TestRequest_Body4(t *testing.T) {
-	method, url := http.MethodPatch, "https://cn.bing.com"
+	method, url := http.MethodPatch, os.Getenv(`TEST_TARGET`)
 	req, _ := New(method, url)
 
 	content := selfContent(`TestRequest_Body4`)
@@ -182,7 +182,7 @@ func (c *selfContent) MarshalBinary() (data []byte, err error) {
 }
 
 func TestRequest_Form(t *testing.T) {
-	method, url := http.MethodPost, "https://cn.bing.com"
+	method, url := http.MethodPost, os.Getenv(`TEST_TARGET`)
 	req, _ := New(method, url)
 
 	err := req.Form(
@@ -233,7 +233,7 @@ func (c *jsonBody) MarshalBinary() (data []byte, err error) {
 }
 
 func TestRequest_Json(t *testing.T) {
-	method, url := http.MethodPost, "https://cn.bing.com"
+	method, url := http.MethodPost, os.Getenv(`TEST_TARGET`)
 	req, _ := New(method, url)
 
 	v1, v2, v3 := 1223455, 232123123, "asdiu1o2i3jlk"
@@ -285,7 +285,7 @@ func (c *xmlBody) MarshalBinary() (data []byte, err error) {
 }
 
 func TestRequest_Xml(t *testing.T) {
-	method, url := http.MethodPost, "https://cn.bing.com"
+	method, url := http.MethodPost, os.Getenv(`TEST_TARGET`)
 	req, _ := New(method, url)
 
 	v1, v2, v3 := 2323124344, 123412, "ssdas412322"
@@ -325,7 +325,7 @@ func TestRequest_Xml(t *testing.T) {
 }
 
 func TestRequest_MultiForm(t *testing.T) {
-	method, url := http.MethodPost, "https://cn.bing.com"
+	method, url := http.MethodPost, os.Getenv(`TEST_TARGET`)
 	req, _ := New(method, url)
 
 	filePath1 := fmt.Sprintf(`%s.txt`, uuid.New().String())
