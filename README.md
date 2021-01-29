@@ -139,3 +139,23 @@ if err := resp.XmlUnmarshal(&a); err != nil {
 	fmt.Println(a)
 }
 ```
+
+## Benchmark
+Gclient VS. net/http.Client
+```
+# test-1
+BenchmarkClient_GClientGet-2      	     373	  14990893 ns/op	 5066127 B/op	   42150 allocs/op
+BenchmarkClient_HttpClientGet-2   	     361	   6489557 ns/op	 2250161 B/op	   18406 allocs/op
+
+# test-2
+BenchmarkClient_GClientGet-2      	     267	  14451088 ns/op	 4812062 B/op	   40183 allocs/op
+BenchmarkClient_HttpClientGet-2   	     320	   9057752 ns/op	 3043013 B/op	   25254 allocs/op
+
+# test-3
+BenchmarkClient_GClientGet-2      	     184	  11190623 ns/op	 3908556 B/op	   32397 allocs/op
+BenchmarkClient_HttpClientGet-2   	     307	  12442205 ns/op	 4197268 B/op	   34799 allocs/op
+
+# test-4
+BenchmarkClient_GClientGet-2      	     231	   7910001 ns/op	 2671297 B/op	   22118 allocs/op
+BenchmarkClient_HttpClientGet-2   	     334	  14316617 ns/op	 4900196 B/op	   40913 allocs/op
+```
