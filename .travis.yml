@@ -6,9 +6,9 @@ env:
   global:
     - GO_REPO_FULLNAME="github.com/jianzhiyao/gclient"
   matrix:
-    - ORM_DRIVER=sqlite3   ORM_SOURCE=$TRAVIS_BUILD_DIR/orm_test.db
-    - ORM_DRIVER=postgres ORM_SOURCE="user=postgres dbname=orm_test sslmode=disable"
-    - ORM_DRIVER=mysql export ORM_SOURCE="root:@/orm_test?charset=utf8"
+    - TEST_EXAMPLE=1
+    - TEST_EXAMPLE=2
+    - TEST_EXAMPLE=3
 before_install:
   # link the local repo with ${GOPATH}/src/<namespace>/<repo>
   - GO_REPO_NAMESPACE=${GO_REPO_FULLNAME%/*}
