@@ -9,6 +9,7 @@ var httpClientPool *sync.Pool
 var httpClientOnce sync.Once
 
 type ReturnHttpClient func(client *http.Client)
+
 func init() {
 	httpClientOnce.Do(func() {
 		httpClientPool = &sync.Pool{
