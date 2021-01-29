@@ -42,18 +42,6 @@ func New(options ...Option) *Client {
 	return c
 }
 
-func NewRequestConnect(url string) (*request.Request, error) {
-	return NewRequest(http.MethodConnect, url)
-}
-
-func NewRequestOptions(url string) (*request.Request, error) {
-	return NewRequest(http.MethodOptions, url)
-}
-
-func NewRequestTrace(url string) (*request.Request, error) {
-	return NewRequest(http.MethodTrace, url)
-}
-
 func (r *Client) Option(option Option) *Client {
 	option(r)
 	return r

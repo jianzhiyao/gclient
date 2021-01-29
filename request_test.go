@@ -58,3 +58,9 @@ func TestNewRequestConnect(t *testing.T) {
 		t.Error()
 	}
 }
+
+func TestNewRequestOptions(t *testing.T) {
+	if c, _ := NewRequestOptions(``); c.GetMethod() != http.MethodOptions {
+		t.Error()
+	}
+}
