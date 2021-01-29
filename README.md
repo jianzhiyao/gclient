@@ -46,7 +46,7 @@ cli := gclient.New(
 
 ## Request
 ### Simple request
-```
+```go
 cli := gclient.New()
 if resp, err := cli.Do(http.MethodHead, "http://exmaple.com/job.json"); err != nil {
 	fmt.Println(err)
@@ -56,8 +56,21 @@ if resp, err := cli.Do(http.MethodHead, "http://exmaple.com/job.json"); err != n
 ```
 
 ### Complex request
-```
-if req, err := request.New(http.MethodGet, "https://exmaple.com"); err != nil {
+
+supported methods
+- NewRequest
+- NewRequestGet
+- NewRequestHead
+- NewRequestPost
+- NewRequestPut
+- NewRequestPatch
+- NewRequestDelete
+- NewRequestConnect
+- NewRequestOptions
+- NewRequestTrace
+
+```go
+if req, err := gclient.NewRequest(http.MethodGet, "https://exmaple.com"); err != nil {
 	fmt.Println(err)
 	} else {
 	var data Data
@@ -96,7 +109,7 @@ if body, err := resp.Bytes(); err != nil {
 ```
 
 #### Unmarshal response content as json
-```
+```go
 var a Resp
 if err := resp.JsonUnmarshal(&a); err != nil {
 	fmt.Println(err)
@@ -106,7 +119,7 @@ if err := resp.JsonUnmarshal(&a); err != nil {
 ```
 
 #### Unmarshal response content as yaml
-```
+```go
 var a Resp
 if err := resp.YamlUnmarshal(&a); err != nil {
 	fmt.Println(err)
@@ -116,7 +129,7 @@ if err := resp.YamlUnmarshal(&a); err != nil {
 ```
 
 #### Unmarshal response content as xml
-```
+```go
 var a Resp
 if err := resp.XmlUnmarshal(&a); err != nil {
 	fmt.Println(err)
