@@ -48,14 +48,6 @@ func OptDisableGzip() Option {
 	return disableSign(SignGzip)
 }
 
-func OptEnableDeflate() Option {
-	return enableSign(SignDeflate)
-}
-
-func OptDisableDeflate() Option {
-	return disableSign(SignDeflate)
-}
-
 func OptEnableBr() Option {
 	return enableSign(SignBr)
 }
