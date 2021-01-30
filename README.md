@@ -143,7 +143,17 @@ if err := resp.XmlUnmarshal(&a); err != nil {
 ## Benchmark
 Gclient VS. net/http.Client
 ```
-# go test -bench=. -benchmem ./...
-BenchmarkClient_GClientGet-12               1874            935191 ns/op           16411 B/op        100 allocs/op
-BenchmarkClient_HttpClientGet-12            1120           1361011 ns/op           15315 B/op         88 allocs/op
+# go test -bench=. -benchmem -cpu 1
+BenchmarkClient_GClientGet_1_Workers                 705           1753318 ns/op           15621 B/op         96 allocs/op
+BenchmarkClient_GClientGet_10_Workers                838           1222005 ns/op           15692 B/op         96 allocs/op
+BenchmarkClient_GClientGet_100_Workers               915           1195727 ns/op           15702 B/op         96 allocs/op
+BenchmarkClient_GClientGet_1000_Workers             1016           1195928 ns/op           17055 B/op        103 allocs/op
+BenchmarkClient_HttpClientGet                       1008           1053572 ns/op           15131 B/op         88 allocs/op
+
+# go test -bench=. -benchmem -cpu 12
+BenchmarkClient_GClientGet_1_Workers-12              844           1499498 ns/op           15706 B/op         96 allocs/op
+BenchmarkClient_GClientGet_10_Workers-12             999           1071070 ns/op           15737 B/op         96 allocs/op
+BenchmarkClient_GClientGet_100_Workers-12            967           1078593 ns/op           15677 B/op         96 allocs/op
+BenchmarkClient_GClientGet_1000_Workers-12          1599           1038410 ns/op           16484 B/op        100 allocs/op
+BenchmarkClient_HttpClientGet-12                    1282           1023567 ns/op           15342 B/op         88 allocs/op
 ```

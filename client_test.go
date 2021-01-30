@@ -69,8 +69,10 @@ func TestClient_DoRequest(t *testing.T) {
 
 }
 
-func BenchmarkClient_GClientGet(b *testing.B) {
-	c := New()
+func benchmarkWithWorker(b *testing.B, size int) {
+	c := New(
+		OptWorkerPoolSize(size),
+	)
 	url := os.Getenv(`TEST_TARGET`)
 	var wg sync.WaitGroup
 	wg.Add(b.N)
@@ -88,6 +90,22 @@ func BenchmarkClient_GClientGet(b *testing.B) {
 		}()
 	}
 	wg.Wait()
+}
+
+func BenchmarkClient_GClientGet_1_Workers(b *testing.B) {
+	benchmarkWithWorker(b, 1)
+}
+
+func BenchmarkClient_GClientGet_10_Workers(b *testing.B) {
+	benchmarkWithWorker(b, 10)
+}
+
+func BenchmarkClient_GClientGet_100_Workers(b *testing.B) {
+	benchmarkWithWorker(b, 100)
+}
+
+func BenchmarkClient_GClientGet_1000_Workers(b *testing.B) {
+	benchmarkWithWorker(b, 1000)
 }
 
 func BenchmarkClient_HttpClientGet(b *testing.B) {

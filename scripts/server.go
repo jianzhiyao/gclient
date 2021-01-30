@@ -22,6 +22,7 @@ func main() {
 		MaxHeaderBytes: 1 << 20,
 	}
 	a := router.Use(
+		gin.Recovery(),
 		compression(),
 	)
 
