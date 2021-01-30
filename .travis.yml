@@ -17,7 +17,8 @@ before_install:
   - cd ${GOPATH}/src/${GO_REPO_FULLNAME}
 install:
   - go version
-  - go run scripts/server.go &
+  # run in background
+  - go run scripts/server.go >/dev/null 2>&1 &
 before_script:
   - sleep 10
   - go version
