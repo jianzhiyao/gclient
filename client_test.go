@@ -69,7 +69,7 @@ func TestClient_DoRequest(t *testing.T) {
 
 }
 
-const BenchmarkLimit = 1000
+const BenchmarkLimit = 50
 func benchmarkWithWorker(b *testing.B, size int) {
 	limit := make(chan bool, BenchmarkLimit)
 
