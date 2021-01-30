@@ -13,9 +13,8 @@ import (
 type Sign int8
 
 const (
-	SignGzip    Sign = 1 << 0
-	SignDeflate Sign = 1 << 1
-	SignBr      Sign = 1 << 2
+	SignGzip Sign = 1 << 0
+	SignBr   Sign = 1 << 1
 )
 
 type Client struct {

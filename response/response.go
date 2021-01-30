@@ -1,7 +1,6 @@
 package response
 
 import (
-	"compress/flate"
 	"compress/gzip"
 	"encoding/json"
 	"encoding/xml"
@@ -46,8 +45,6 @@ func (r *Response) readBytes() ([]byte, error) {
 	switch r.resp.Header.Get(consts.HeaderContentEncoding) {
 	case consts.ContentEncodingGzip:
 		reader, err = gzip.NewReader(r.resp.Body)
-	case consts.ContentEncodingDeflate:
-		reader = flate.NewReader(r.resp.Body)
 	case consts.ContentEncodingBr:
 		reader, err = brotli.NewReader(r.resp.Body, nil)
 	default:
