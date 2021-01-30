@@ -69,12 +69,18 @@ func TestClient_DoRequest(t *testing.T) {
 
 }
 
-func BenchmarkClient_GClientGet(b *testing.B) {
-	c := New()
-	url := os.Getenv(`TEST_TARGET`)
+const BenchmarkLimit = 50
+func benchmarkWithWorker(b *testing.B, size int) {
+	limit := make(chan bool, BenchmarkLimit)
+
+	c := New(
+		OptWorkerPoolSize(size),
+	)
+	url := os.Getenv(`BENCHMARK_TARGET`)
 	var wg sync.WaitGroup
 	wg.Add(b.N)
 	for i := 0; i < b.N; i++ {
+		limit <- true
 		go func() {
 			req, _ := NewRequestGet(url)
 			if resp, err := c.DoRequest(req); err != nil {
@@ -85,17 +91,37 @@ func BenchmarkClient_GClientGet(b *testing.B) {
 				}
 			}
 			wg.Done()
+			<-limit
 		}()
 	}
 	wg.Wait()
 }
 
+func BenchmarkClient_GClientGet_1_Workers(b *testing.B) {
+	benchmarkWithWorker(b, 1)
+}
+
+func BenchmarkClient_GClientGet_10_Workers(b *testing.B) {
+	benchmarkWithWorker(b, 10)
+}
+
+func BenchmarkClient_GClientGet_100_Workers(b *testing.B) {
+	benchmarkWithWorker(b, 100)
+}
+
+func BenchmarkClient_GClientGet_1000_Workers(b *testing.B) {
+	benchmarkWithWorker(b, 1000)
+}
+
 func BenchmarkClient_HttpClientGet(b *testing.B) {
+	limit := make(chan bool, BenchmarkLimit)
+
 	c := &http.Client{}
-	url := os.Getenv(`TEST_TARGET`)
+	url := os.Getenv(`BENCHMARK_TARGET`)
 	var wg sync.WaitGroup
 	wg.Add(b.N)
 	for i := 0; i < b.N; i++ {
+		limit <- true
 		go func() {
 			req, _ := http.NewRequest(http.MethodGet, url, nil)
 			if resp, err := c.Do(req); err != nil {
@@ -106,6 +132,7 @@ func BenchmarkClient_HttpClientGet(b *testing.B) {
 				}
 			}
 			wg.Done()
+			<-limit
 		}()
 	}
 	wg.Wait()

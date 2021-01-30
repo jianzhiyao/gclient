@@ -110,50 +110,6 @@ func TestOptDisableGzip(t *testing.T) {
 	}
 }
 
-func TestOptEnableDeflate(t *testing.T) {
-	req := New(OptEnableDeflate())
-
-	if req.sign&int8(SignDeflate) == 0 {
-		t.Error()
-		return
-	}
-}
-
-func TestOptEnableDeflate2(t *testing.T) {
-	req := New(
-		OptEnableDeflate(),
-	)
-	url := os.Getenv(`TEST_TARGET`)
-
-	resp, err := req.Do(http.MethodGet, url)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	if !strings.Contains(resp.Header(consts.HeaderContentEncoding), consts.ContentEncodingDeflate) {
-		t.Error()
-		return
-	}
-	_, err = resp.String()
-	if err != nil {
-		t.Error(err)
-		return
-	}
-}
-
-func TestOptDisableDeflate(t *testing.T) {
-	req := New(
-		OptEnableDeflate(),
-		OptDisableDeflate(),
-	)
-
-	if req.sign&int8(SignDeflate) != 0 {
-		t.Error()
-		return
-	}
-}
-
 func TestOptTransport(t *testing.T) {
 	req := New(
 		OptTransport(&http.Transport{}),

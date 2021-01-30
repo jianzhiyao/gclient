@@ -48,14 +48,6 @@ func OptDisableGzip() Option {
 	return disableSign(SignGzip)
 }
 
-func OptEnableDeflate() Option {
-	return enableSign(SignDeflate)
-}
-
-func OptDisableDeflate() Option {
-	return disableSign(SignDeflate)
-}
-
 func OptEnableBr() Option {
 	return enableSign(SignBr)
 }
@@ -105,9 +97,6 @@ func enableSign(t Sign) Option {
 		if req.sign&int8(SignGzip) != 0 {
 			contentEncoding = append(contentEncoding, consts.ContentEncodingGzip)
 		}
-		if req.sign&int8(SignDeflate) != 0 {
-			contentEncoding = append(contentEncoding, consts.ContentEncodingDeflate)
-		}
 		if req.sign&int8(SignBr) != 0 {
 			contentEncoding = append(contentEncoding, consts.ContentEncodingBr)
 		}
@@ -124,9 +113,6 @@ func disableSign(t Sign) Option {
 		var contentEncoding []string
 		if req.sign&int8(SignGzip) != 0 {
 			contentEncoding = append(contentEncoding, consts.ContentEncodingGzip)
-		}
-		if req.sign&int8(SignDeflate) != 0 {
-			contentEncoding = append(contentEncoding, consts.ContentEncodingDeflate)
 		}
 		if req.sign&int8(SignBr) != 0 {
 			contentEncoding = append(contentEncoding, consts.ContentEncodingBr)
