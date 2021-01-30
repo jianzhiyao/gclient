@@ -7,9 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mholt/archiver/v3"
 	"net/http"
+	_ "net/http/pprof"
 	"strings"
 	"time"
 )
+
+func any() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		context.Header(`Content-Type`, `text/html`)
+		context.String(http.StatusOK, `ok`)
+	}
+}
 
 func main() {
 	router := gin.Default()
@@ -21,15 +29,23 @@ func main() {
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
-	a := router.Use(
-		gin.Recovery(),
-		compression(),
-	)
 
-	a.Any(`/`, func(context *gin.Context) {
-		context.Header(`Content-Type`, `text/html`)
-		context.String(http.StatusOK, `ok`)
-	})
+	api := router.Use(
+		gin.Recovery(),
+	)
+	{
+		//UT
+		ut := api.Use(
+			compression(),
+		)
+		{
+			ut.Any(`/`, any())
+		}
+
+		//benchmark
+		api.Any(`/benchmark`, any())
+	}
+
 	s.ListenAndServe()
 }
 
@@ -45,19 +61,21 @@ func compression() gin.HandlerFunc {
 			encoding = `gzip`
 			compressor = archiver.NewGz()
 		}
-		ctx.Writer = &handler{
-			ResponseWriter: ctx.Writer,
-			Compressor:     compressor,
-		}
-		ctx.Header("Content-Encoding", encoding)
-		defer func() {
-			if encoding != `` {
-				ctx.Header("Content-Length", fmt.Sprint(ctx.Writer.Size()))
+
+		if compressor != nil {
+			ctx.Writer = &handler{
+				ResponseWriter: ctx.Writer,
+				Compressor:     compressor,
 			}
-		}()
+			ctx.Header("Content-Encoding", encoding)
+			defer func() {
+				if encoding != `` {
+					ctx.Header("Content-Length", fmt.Sprint(ctx.Writer.Size()))
+				}
+			}()
+		}
 
 		ctx.Next()
-
 	}
 }
 
