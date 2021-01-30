@@ -69,7 +69,10 @@ func TestClient_DoRequest(t *testing.T) {
 
 }
 
+const BenchmarkLimit = 1000
 func benchmarkWithWorker(b *testing.B, size int) {
+	limit := make(chan bool, BenchmarkLimit)
+
 	c := New(
 		OptWorkerPoolSize(size),
 	)
@@ -77,6 +80,7 @@ func benchmarkWithWorker(b *testing.B, size int) {
 	var wg sync.WaitGroup
 	wg.Add(b.N)
 	for i := 0; i < b.N; i++ {
+		limit <- true
 		go func() {
 			req, _ := NewRequestGet(url)
 			if resp, err := c.DoRequest(req); err != nil {
@@ -87,6 +91,7 @@ func benchmarkWithWorker(b *testing.B, size int) {
 				}
 			}
 			wg.Done()
+			<-limit
 		}()
 	}
 	wg.Wait()
@@ -109,11 +114,14 @@ func BenchmarkClient_GClientGet_1000_Workers(b *testing.B) {
 }
 
 func BenchmarkClient_HttpClientGet(b *testing.B) {
+	limit := make(chan bool, BenchmarkLimit)
+
 	c := &http.Client{}
 	url := os.Getenv(`BENCHMARK_TARGET`)
 	var wg sync.WaitGroup
 	wg.Add(b.N)
 	for i := 0; i < b.N; i++ {
+		limit <- true
 		go func() {
 			req, _ := http.NewRequest(http.MethodGet, url, nil)
 			if resp, err := c.Do(req); err != nil {
@@ -124,6 +132,7 @@ func BenchmarkClient_HttpClientGet(b *testing.B) {
 				}
 			}
 			wg.Done()
+			<-limit
 		}()
 	}
 	wg.Wait()
