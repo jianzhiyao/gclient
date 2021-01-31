@@ -3,7 +3,6 @@ package request
 import (
 	"bytes"
 	"encoding"
-	"errors"
 	"github.com/jianzhiyao/gclient/consts"
 	"github.com/jianzhiyao/gclient/consts/content_type"
 	"github.com/jianzhiyao/gclient/consts/transfer_encoding"
@@ -17,70 +16,51 @@ import (
 )
 
 type Request struct {
-	method  string
-	url     string
-	headers http.Header
-	body    io.ReadCloser
+	*http.Request
 }
 
 //New base method of new request
 func New(method, uri string) (*Request, error) {
-	switch method {
-	case http.MethodGet:
-	case http.MethodPost:
-	case http.MethodConnect:
-	case http.MethodDelete:
-	case http.MethodHead:
-	case http.MethodOptions:
-	case http.MethodPatch:
-	case http.MethodPut:
-	case http.MethodTrace:
-	default:
-		return nil, errors.New("not a valid http method")
-	}
 
-	//check validation of uri
-	if _, err := url.Parse(uri); err != nil {
+	if req, err := http.NewRequest(method, uri, nil); err != nil {
 		return nil, err
+	} else {
+		return &Request{
+			Request: req,
+		}, nil
 	}
-
-	return &Request{
-		method:  method,
-		url:     uri,
-		headers: nil,
-	}, nil
 }
 
 func (r *Request) SetHeader(key string, value ...string) {
-	if r.headers == nil {
-		r.headers = http.Header{}
+	if r.Request.Header == nil {
+		r.Request.Header = http.Header{}
 	}
-	r.headers[key] = value
+	r.Request.Header[key] = value
 }
 
 func (r *Request) GetUrl() string {
-	return r.url
+	return r.URL.String()
 }
 
 func (r *Request) GetMethod() string {
-	return r.method
+	return r.Request.Method
 }
 
 func (r *Request) GetHeaders() http.Header {
-	return r.headers
+	return r.Request.Header
 }
 
 func (r *Request) GetHeader(key string) (value []string, ok bool) {
-	if r.headers == nil {
+	if r.Request.Header == nil {
 		return
 	}
 
-	value, ok = r.headers[key]
+	value, ok = r.Request.Header[key]
 	return
 }
 
 func (r *Request) GetBody() io.Reader {
-	return r.body
+	return r.Request.Body
 }
 
 func (r *Request) Json(body interface{}) (err error) {
@@ -161,7 +141,7 @@ func (r *Request) Body(body interface{}) (err error) {
 	if err != nil {
 		return
 	}
-	r.body = ioutil.NopCloser(reader)
+	r.Request.Body = ioutil.NopCloser(reader)
 
 	return
 }
