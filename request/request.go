@@ -21,7 +21,6 @@ type Request struct {
 
 //New base method of new request
 func New(method, uri string) (*Request, error) {
-
 	if req, err := http.NewRequest(method, uri, nil); err != nil {
 		return nil, err
 	} else {

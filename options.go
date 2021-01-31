@@ -3,6 +3,7 @@ package gclient
 import (
 	"context"
 	"github.com/jianzhiyao/gclient/consts"
+	"github.com/panjf2000/ants/v2"
 	"net/http"
 	"time"
 )
@@ -85,6 +86,12 @@ func OptRetry(times int) Option {
 //default size is 1000
 func OptWorkerPoolSize(size int) Option {
 	return func(req *Client) {
+		if req.pool == nil {
+			req.pool, _ = ants.NewPool(
+				1,
+				ants.WithNonblocking(false),
+			)
+		}
 		req.pool.Tune(size)
 	}
 }

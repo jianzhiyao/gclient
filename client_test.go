@@ -139,3 +139,23 @@ func BenchmarkClient_HttpClientGet(b *testing.B) {
 	}
 	wg.Wait()
 }
+
+func Benchmark_Gclient_NewRequest(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		if req, err := NewRequest(http.MethodGet, os.Getenv(`TEST_TARGET`)); err != nil {
+			b.Error(err)
+		} else if req == nil {
+			b.Error()
+		}
+	}
+}
+
+func Benchmark_Http_NewRequest(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		if req, err := http.NewRequest(http.MethodGet, os.Getenv(`TEST_TARGET`), nil); err != nil {
+			b.Error(err)
+		} else if req == nil {
+			b.Error()
+		}
+	}
+}

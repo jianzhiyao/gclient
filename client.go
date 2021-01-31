@@ -36,13 +36,8 @@ type Client struct {
 }
 
 func New(options ...Option) *Client {
-	pool, _ := ants.NewPool(
-		1024,
-		ants.WithNonblocking(false),
-	)
 	c := &Client{
 		headers: http.Header{},
-		pool:    pool,
 	}
 
 	c.Options(options...)
@@ -81,17 +76,26 @@ func (r *Client) Do(method, url string) (*response.Response, error) {
 }
 
 func (r *Client) DoRequest(req *request.Request) (resp *response.Response, err error) {
-	c := make(chan bool)
-	_ = r.pool.Submit(func() {
+	if r.pool == nil {
 		resp, err = r.do(
 			req.GetMethod(),
 			req.GetUrl(),
 			req.GetBody(),
 			req.GetHeaders(),
 		)
-		c <- true
-	})
-	<-c
+	} else {
+		c := make(chan bool)
+		_ = r.pool.Submit(func() {
+			resp, err = r.do(
+				req.GetMethod(),
+				req.GetUrl(),
+				req.GetBody(),
+				req.GetHeaders(),
+			)
+			c <- true
+		})
+		<-c
+	}
 	return
 }
 
