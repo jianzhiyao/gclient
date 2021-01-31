@@ -236,14 +236,3 @@ func TestOptTimeout(t *testing.T) {
 		return
 	}
 }
-
-func TestOptWorkerPoolSize(t *testing.T) {
-	req := New(
-		OptWorkerPoolSize(12543),
-	)
-
-	if req.pool.Cap() != 12543 {
-		t.Error()
-		return
-	}
-}
