@@ -39,7 +39,7 @@ func TestNew(t *testing.T) {
 			t.Error(err)
 		}
 
-		if req.Request.Method != method {
+		if req.request.Method != method {
 			t.Error()
 		}
 
@@ -84,13 +84,13 @@ func TestRequest_SetHeader(t *testing.T) {
 	req.SetHeader("a", "1")
 	req.SetHeader("b", "1")
 
-	if _, ok := req.Request.Header["a"]; !ok {
+	if _, ok := req.request.Header["a"]; !ok {
 		t.Error()
 	}
-	if _, ok := req.Request.Header["b"]; !ok {
+	if _, ok := req.request.Header["b"]; !ok {
 		t.Error()
 	}
-	if _, ok := req.Request.Header["c"]; ok {
+	if _, ok := req.request.Header["c"]; ok {
 		t.Error()
 	}
 }

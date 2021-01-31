@@ -16,7 +16,7 @@ import (
 )
 
 type Request struct {
-	*http.Request
+	request *http.Request
 }
 
 //New base method of new request
@@ -26,41 +26,41 @@ func New(method, uri string) (*Request, error) {
 		return nil, err
 	} else {
 		return &Request{
-			Request: req,
+			request: req,
 		}, nil
 	}
 }
 
 func (r *Request) SetHeader(key string, value ...string) {
-	if r.Request.Header == nil {
-		r.Request.Header = http.Header{}
+	if r.request.Header == nil {
+		r.request.Header = http.Header{}
 	}
-	r.Request.Header[key] = value
+	r.request.Header[key] = value
 }
 
 func (r *Request) GetUrl() string {
-	return r.URL.String()
+	return r.request.URL.String()
 }
 
 func (r *Request) GetMethod() string {
-	return r.Request.Method
+	return r.request.Method
 }
 
 func (r *Request) GetHeaders() http.Header {
-	return r.Request.Header
+	return r.request.Header
 }
 
 func (r *Request) GetHeader(key string) (value []string, ok bool) {
-	if r.Request.Header == nil {
+	if r.request.Header == nil {
 		return
 	}
 
-	value, ok = r.Request.Header[key]
+	value, ok = r.request.Header[key]
 	return
 }
 
 func (r *Request) GetBody() io.Reader {
-	return r.Request.Body
+	return r.request.Body
 }
 
 func (r *Request) Json(body interface{}) (err error) {
@@ -141,7 +141,7 @@ func (r *Request) Body(body interface{}) (err error) {
 	if err != nil {
 		return
 	}
-	r.Request.Body = ioutil.NopCloser(reader)
+	r.request.Body = ioutil.NopCloser(reader)
 
 	return
 }
