@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func any() gin.HandlerFunc {
+func ok() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		context.Header(`Content-Type`, `text/html`)
 		context.String(http.StatusOK, `ok`)
@@ -29,6 +29,7 @@ func main() {
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
+	s.SetKeepAlivesEnabled(false)
 
 	api := router.Use(
 		gin.Recovery(),
@@ -39,11 +40,31 @@ func main() {
 			compression(),
 		)
 		{
-			ut.Any(`/`, any())
+			ut.Any(`/`, ok())
+			ut.GET(`/ok`, ok())
+			ut.GET(`/json`, func(context *gin.Context) {
+				context.JSON(http.StatusOK, gin.H{
+					"code":    1,
+					"message": "ok",
+					"users":   []string{`aaron`, `john`},
+				})
+			})
+			ut.GET(`/xml`, func(context *gin.Context) {
+				context.XML(http.StatusOK, gin.H{
+					"message": "ok",
+				})
+			})
+			ut.GET(`/yaml`, func(context *gin.Context) {
+				context.YAML(http.StatusOK, gin.H{
+					"code":    1,
+					"message": "ok",
+					"users":   []string{`aaron`, `john`},
+				})
+			})
 		}
 
 		//benchmark
-		api.Any(`/benchmark`, any())
+		api.Any(`/benchmark`, ok())
 	}
 
 	s.ListenAndServe()
