@@ -4,13 +4,14 @@ go:
   - "1.14.x"
 env:
   global:
-    - GO_REPO_FULLNAME="github.com/jianzhiyao/gclient" TEST_TARGET=http://127.0.0.1:8080/ BENCHMARK_TARGET=http://127.0.0.1:8080/benchmark
+    - GO_REPO_FULLNAME="github.com/jianzhiyao/gclient" TEST_TARGET=http://127.0.0.1:8080/
   matrix:
-    - BENCHMARK_LIMIT=50
-    - BENCHMARK_LIMIT=100
-    - BENCHMARK_LIMIT=200
-    - BENCHMARK_LIMIT=300
-    - BENCHMARK_LIMIT=500
+    - BENCHMARK_TARGET=http://127.0.0.1:8080/benchmark BENCHMARK_LIMIT=50
+    - BENCHMARK_TARGET=http://127.0.0.1:8080/benchmark BENCHMARK_LIMIT=100
+    - BENCHMARK_TARGET=https://www.google.com/ BENCHMARK_LIMIT=50
+    - BENCHMARK_TARGET=https:/www.google.com/ BENCHMARK_LIMIT=100
+    - BENCHMARK_TARGET=https://www.bing.com/ BENCHMARK_LIMIT=50
+    - BENCHMARK_TARGET=https:/www.bing.com/ BENCHMARK_LIMIT=100
 before_install:
   # link the local repo with ${GOPATH}/src/<namespace>/<repo>
   - GO_REPO_NAMESPACE=${GO_REPO_FULLNAME%/*}
