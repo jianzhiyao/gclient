@@ -3,6 +3,7 @@ package gclient
 import (
 	"net/http"
 	"os"
+	"strconv"
 	"sync"
 	"testing"
 	"time"
@@ -69,9 +70,9 @@ func TestClient_DoRequest(t *testing.T) {
 
 }
 
-const BenchmarkLimit = 50
 func benchmarkWithWorker(b *testing.B, size int) {
-	limit := make(chan bool, BenchmarkLimit)
+	benchmarkLimit, _ := strconv.Atoi(os.Getenv(`BENCHMARK_LIMIT`))
+	limit := make(chan bool, benchmarkLimit)
 
 	c := New(
 		OptWorkerPoolSize(size),
@@ -114,7 +115,8 @@ func BenchmarkClient_GClientGet_1000_Workers(b *testing.B) {
 }
 
 func BenchmarkClient_HttpClientGet(b *testing.B) {
-	limit := make(chan bool, BenchmarkLimit)
+	benchmarkLimit, _ := strconv.Atoi(os.Getenv(`BENCHMARK_LIMIT`))
+	limit := make(chan bool, benchmarkLimit)
 
 	c := &http.Client{}
 	url := os.Getenv(`BENCHMARK_TARGET`)
