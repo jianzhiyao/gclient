@@ -3,6 +3,7 @@ package gclient
 import (
 	"net/http"
 	"os"
+	"strconv"
 	"sync"
 	"testing"
 	"time"
@@ -69,9 +70,9 @@ func TestClient_DoRequest(t *testing.T) {
 
 }
 
-const BenchmarkLimit = 50
 func benchmarkWithWorker(b *testing.B, size int) {
-	limit := make(chan bool, BenchmarkLimit)
+	benchmarkLimit, _ := strconv.Atoi(os.Getenv(`BENCHMARK_LIMIT`))
+	limit := make(chan bool, benchmarkLimit)
 
 	c := New(
 		OptWorkerPoolSize(size),
@@ -114,7 +115,8 @@ func BenchmarkClient_GClientGet_1000_Workers(b *testing.B) {
 }
 
 func BenchmarkClient_HttpClientGet(b *testing.B) {
-	limit := make(chan bool, BenchmarkLimit)
+	benchmarkLimit, _ := strconv.Atoi(os.Getenv(`BENCHMARK_LIMIT`))
+	limit := make(chan bool, benchmarkLimit)
 
 	c := &http.Client{}
 	url := os.Getenv(`BENCHMARK_TARGET`)
@@ -136,4 +138,24 @@ func BenchmarkClient_HttpClientGet(b *testing.B) {
 		}()
 	}
 	wg.Wait()
+}
+
+func Benchmark_Gclient_NewRequest(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		if req, err := NewRequest(http.MethodGet, os.Getenv(`TEST_TARGET`)); err != nil {
+			b.Error(err)
+		} else if req == nil {
+			b.Error()
+		}
+	}
+}
+
+func Benchmark_Http_NewRequest(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		if req, err := http.NewRequest(http.MethodGet, os.Getenv(`TEST_TARGET`), nil); err != nil {
+			b.Error(err)
+		} else if req == nil {
+			b.Error()
+		}
+	}
 }

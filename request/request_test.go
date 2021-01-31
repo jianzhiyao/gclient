@@ -39,23 +39,15 @@ func TestNew(t *testing.T) {
 			t.Error(err)
 		}
 
-		if req.method != method {
-			t.Error(err)
+		if req.request.Method != method {
+			t.Error()
 		}
 
-		if req.url != url {
+		if req.GetUrl() != url {
 			t.Error(err)
 		}
 	}
 
-}
-
-func TestNew2(t *testing.T) {
-	method, url := `1`, os.Getenv(`TEST_TARGET`)
-	_, err := New(method, url)
-	if err == nil {
-		t.Error(err)
-	}
 }
 
 func TestRequest_Method(t *testing.T) {
@@ -92,13 +84,13 @@ func TestRequest_SetHeader(t *testing.T) {
 	req.SetHeader("a", "1")
 	req.SetHeader("b", "1")
 
-	if _, ok := req.headers["a"]; !ok {
+	if _, ok := req.request.Header["a"]; !ok {
 		t.Error()
 	}
-	if _, ok := req.headers["b"]; !ok {
+	if _, ok := req.request.Header["b"]; !ok {
 		t.Error()
 	}
-	if _, ok := req.headers["c"]; ok {
+	if _, ok := req.request.Header["c"]; ok {
 		t.Error()
 	}
 }

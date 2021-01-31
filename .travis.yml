@@ -2,13 +2,12 @@ language: go
 
 go:
   - "1.14.x"
-  - "1.15.x"
 env:
   global:
-    - GO_REPO_FULLNAME="github.com/jianzhiyao/gclient"
+    - GO_REPO_FULLNAME="github.com/jianzhiyao/gclient" TEST_TARGET=http://127.0.0.1:8080/
   matrix:
-    - TEST_TARGET=http://127.0.0.1:8080/ BENCHMARK_TARGET=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js
-    - TEST_TARGET=http://127.0.0.1:8080/ BENCHMARK_TARGET=https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js
+    - BENCHMARK_TARGET=http://127.0.0.1:8080/benchmark  BENCHMARK_LIMIT=50
+    - BENCHMARK_TARGET=http://127.0.0.1:8080/benchmark BENCHMARK_LIMIT=100
 before_install:
   # link the local repo with ${GOPATH}/src/<namespace>/<repo>
   - GO_REPO_NAMESPACE=${GO_REPO_FULLNAME%/*}
