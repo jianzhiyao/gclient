@@ -142,8 +142,8 @@ if err := resp.XmlUnmarshal(&a); err != nil {
 Gclient VS. net/http.Client
 ```
 # requests
-BenchmarkClient_GClientGet_1000_Workers-12    	    2020	    694924 ns/op
-BenchmarkClient_HttpClientGet-12    	            2284	    751703 ns/op
+BenchmarkClient_GClientGet-12    	        2500	    814623 ns/op
+BenchmarkClient_HttpClientGet-12    	    2024	    870806 ns/op
 
 # new request
 Benchmark_Gclient_NewRequest-12    	  799914	      1350 ns/op
