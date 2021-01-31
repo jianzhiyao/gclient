@@ -70,13 +70,11 @@ func TestClient_DoRequest(t *testing.T) {
 
 }
 
-func benchmarkWithWorker(b *testing.B, size int) {
+func BenchmarkClient_GClientGet(b *testing.B) {
 	benchmarkLimit, _ := strconv.Atoi(os.Getenv(`BENCHMARK_LIMIT`))
 	limit := make(chan bool, benchmarkLimit)
 
-	c := New(
-		OptWorkerPoolSize(size),
-	)
+	c := New()
 	url := os.Getenv(`BENCHMARK_TARGET`)
 	var wg sync.WaitGroup
 	wg.Add(b.N)
@@ -96,22 +94,6 @@ func benchmarkWithWorker(b *testing.B, size int) {
 		}()
 	}
 	wg.Wait()
-}
-
-func BenchmarkClient_GClientGet_1_Workers(b *testing.B) {
-	benchmarkWithWorker(b, 1)
-}
-
-func BenchmarkClient_GClientGet_10_Workers(b *testing.B) {
-	benchmarkWithWorker(b, 10)
-}
-
-func BenchmarkClient_GClientGet_100_Workers(b *testing.B) {
-	benchmarkWithWorker(b, 100)
-}
-
-func BenchmarkClient_GClientGet_1000_Workers(b *testing.B) {
-	benchmarkWithWorker(b, 1000)
 }
 
 func BenchmarkClient_HttpClientGet(b *testing.B) {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/jianzhiyao/gclient/request"
 	"github.com/jianzhiyao/gclient/response"
-	"github.com/panjf2000/ants/v2"
 	"io"
 	"net/http"
 	"time"
@@ -28,9 +27,6 @@ type Client struct {
 	clientTransport     http.RoundTripper
 	clientCheckRedirect CheckRedirectHandler
 	clientTimeout       time.Duration
-
-	//goroutines pool
-	pool *ants.Pool
 
 	sign int8
 }
@@ -76,27 +72,12 @@ func (r *Client) Do(method, url string) (*response.Response, error) {
 }
 
 func (r *Client) DoRequest(req *request.Request) (resp *response.Response, err error) {
-	if r.pool == nil {
-		resp, err = r.do(
-			req.GetMethod(),
-			req.GetUrl(),
-			req.GetBody(),
-			req.GetHeaders(),
-		)
-	} else {
-		c := make(chan bool)
-		_ = r.pool.Submit(func() {
-			resp, err = r.do(
-				req.GetMethod(),
-				req.GetUrl(),
-				req.GetBody(),
-				req.GetHeaders(),
-			)
-			c <- true
-		})
-		<-c
-	}
-	return
+	return r.do(
+		req.GetMethod(),
+		req.GetUrl(),
+		req.GetBody(),
+		req.GetHeaders(),
+	)
 }
 
 func (r *Client) do(method, url string, body io.Reader, headers http.Header) (*response.Response, error) {

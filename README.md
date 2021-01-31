@@ -41,8 +41,6 @@ cli := gclient.New(
 		gclient.OptCookieJar(nil),
 		//set transport for http.Client
 		gclient.OptTransport(nil),
-        //resize worker poll size(default 1000)
-		gclient.OptWorkerPoolSize(5),
 	)
 ```
 
