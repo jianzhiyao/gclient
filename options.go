@@ -74,10 +74,10 @@ func OptCheckRedirectHandler(clientCheckRedirect CheckRedirectHandler) Option {
 	}
 }
 
-//OptRetry set retry time of requests in one client
-func OptRetry(times int) Option {
+//OptRetry set retry num of requests in one client
+func OptRetry(num int) Option {
 	return func(req *Client) {
-		req.retry = times
+		req.retry = num
 	}
 }
 

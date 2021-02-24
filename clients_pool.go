@@ -6,23 +6,20 @@ import (
 )
 
 var httpClientPool *sync.Pool
-var httpClientOnce sync.Once
 
 type ReturnHttpClient func(client *http.Client)
 
 func init() {
-	httpClientOnce.Do(func() {
-		httpClientPool = &sync.Pool{
-			New: func() interface{} {
-				return &http.Client{
-					Transport:     nil,
-					CheckRedirect: nil,
-					Jar:           nil,
-					Timeout:       0,
-				}
-			},
-		}
-	})
+	httpClientPool = &sync.Pool{
+		New: func() interface{} {
+			return &http.Client{
+				Transport:     nil,
+				CheckRedirect: nil,
+				Jar:           nil,
+				Timeout:       0,
+			}
+		},
+	}
 }
 
 func getClientFromPool() (*http.Client, ReturnHttpClient) {
