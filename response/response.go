@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"github.com/dsnet/compress/brotli"
 	"github.com/jianzhiyao/gclient/consts"
 	"gopkg.in/yaml.v2"
@@ -33,26 +34,15 @@ func (r *Response) StatusCode() int {
 }
 
 func (r *Response) readBytes() ([]byte, error) {
-	if r.resp.Body == nil {
-		return nil, errors.New("invalid response body")
-	}
-	defer r.resp.Body.Close()
-
-	var (
-		reader io.ReadCloser
-		err    error
-	)
-	switch r.resp.Header.Get(consts.HeaderContentEncoding) {
-	case consts.ContentEncodingGzip:
-		reader, err = gzip.NewReader(r.resp.Body)
-	case consts.ContentEncodingBr:
-		reader, err = brotli.NewReader(r.resp.Body, nil)
-	default:
-		reader = r.resp.Body
-	}
+	reader, err := r.Body()
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		if reader != nil {
+			reader.Close()
+		}
+	}()
 	return ioutil.ReadAll(reader)
 }
 
@@ -101,4 +91,27 @@ func (r *Response) Headers() map[string][]string {
 		m[key] = value
 	}
 	return m
+}
+
+func (r *Response) Body() (io.ReadCloser, error) {
+	if r.resp != nil {
+		if r.resp.Body == nil {
+			return nil, errors.New("invalid response body")
+		}
+
+		var (
+			reader io.ReadCloser
+			err    error
+		)
+		switch r.resp.Header.Get(consts.HeaderContentEncoding) {
+		case consts.ContentEncodingGzip:
+			reader, err = gzip.NewReader(r.resp.Body)
+		case consts.ContentEncodingBr:
+			reader, err = brotli.NewReader(r.resp.Body, nil)
+		default:
+			reader = r.resp.Body
+		}
+		return reader, err
+	}
+	return nil, fmt.Errorf("not valid response")
 }
