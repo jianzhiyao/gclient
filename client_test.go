@@ -76,7 +76,7 @@ func BenchmarkClient_GClientGet(b *testing.B) {
 	limit := make(chan bool, benchmarkLimit)
 
 	c := New()
-	url := os.Getenv(`BENCHMARK_TARGET`)
+	url := tests.GetServerUrl() + "benchmark"
 	var wg sync.WaitGroup
 	wg.Add(b.N)
 	for i := 0; i < b.N; i++ {
@@ -102,7 +102,7 @@ func BenchmarkClient_HttpClientGet(b *testing.B) {
 	limit := make(chan bool, benchmarkLimit)
 
 	c := &http.Client{}
-	url := os.Getenv(`BENCHMARK_TARGET`)
+	url := tests.GetServerUrl() + "benchmark"
 	var wg sync.WaitGroup
 	wg.Add(b.N)
 	for i := 0; i < b.N; i++ {
