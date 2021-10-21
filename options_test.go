@@ -3,9 +3,9 @@ package gclient
 import (
 	"context"
 	"github.com/jianzhiyao/gclient/consts"
+	"github.com/jianzhiyao/gclient/tests"
 	"net/http"
 	"net/http/cookiejar"
-	"os"
 	"strings"
 	"testing"
 	"time"
@@ -34,7 +34,7 @@ func TestOptEnableBr2(t *testing.T) {
 	req := New(
 		OptEnableBr(),
 	)
-	url := os.Getenv(`TEST_TARGET`)
+	url := tests.GetServerUrl()
 
 	resp, err := req.Do(http.MethodGet, url)
 	if err != nil {
@@ -79,7 +79,7 @@ func TestOptEnableGzip2(t *testing.T) {
 	req := New(
 		OptEnableGzip(),
 	)
-	url := os.Getenv(`TEST_TARGET`)
+	url := tests.GetServerUrl() + "ok"
 
 	resp, err := req.Do(http.MethodGet, url)
 	if err != nil {
@@ -91,9 +91,13 @@ func TestOptEnableGzip2(t *testing.T) {
 		t.Error()
 		return
 	}
-	_, err = resp.String()
+	content, err := resp.String()
 	if err != nil {
 		t.Error(err)
+		return
+	}
+	if content != "ok" {
+		t.Error("content not ok")
 		return
 	}
 }

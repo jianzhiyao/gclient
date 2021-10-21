@@ -1,13 +1,13 @@
 package response
 
 import (
+	"github.com/jianzhiyao/gclient/tests"
 	"net/http"
-	"os"
 	"testing"
 )
 
 func TestResponse_Bytes(t *testing.T) {
-	url := os.Getenv(`TEST_TARGET`) + `ok`
+	url := tests.GetServerUrl() + `ok`
 	c := &http.Client{}
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
 
@@ -25,7 +25,7 @@ func TestResponse_Bytes(t *testing.T) {
 }
 
 func TestResponse_String(t *testing.T) {
-	url := os.Getenv(`TEST_TARGET`) + `ok`
+	url := tests.GetServerUrl() + `ok`
 	c := &http.Client{}
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
 
@@ -51,7 +51,7 @@ func TestResponse_JsonUnmarshal(t *testing.T) {
 
 	var j J
 
-	url := os.Getenv(`TEST_TARGET`) + `json`
+	url := tests.GetServerUrl() + `json`
 	c := &http.Client{}
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
 
@@ -85,7 +85,7 @@ func TestResponse_XmlUnmarshal(t *testing.T) {
 
 	var x X
 
-	url := os.Getenv(`TEST_TARGET`) + `xml`
+	url := tests.GetServerUrl() + `xml`
 	c := &http.Client{}
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
 
@@ -111,7 +111,7 @@ func TestResponse_YamlUnmarshal(t *testing.T) {
 
 	var y Y
 
-	url := os.Getenv(`TEST_TARGET`) + `yaml`
+	url := tests.GetServerUrl() + `yaml`
 	c := &http.Client{}
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
 

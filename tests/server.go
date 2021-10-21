@@ -1,36 +1,27 @@
-package main
+package tests
 
-//导入包
 import (
 	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/mholt/archiver/v3"
 	"net/http"
-	_ "net/http/pprof"
+	"net/http/httptest"
 	"strings"
-	"time"
 )
 
-func ok() gin.HandlerFunc {
-	return func(context *gin.Context) {
-		context.Header(`Content-Type`, `text/html`)
-		context.String(http.StatusOK, `ok`)
-	}
+var server = newServer()
+
+func GetServer() *httptest.Server {
+	return server
 }
 
-func main() {
+func GetServerUrl() string {
+	return GetServer().URL + "/"
+}
+
+func newServer() *httptest.Server {
 	router := gin.Default()
-
-	s := &http.Server{
-		Addr:           ":8080",
-		Handler:        router,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
-	}
-	s.SetKeepAlivesEnabled(false)
-
 	api := router.Use(
 		gin.Recovery(),
 	)
@@ -67,7 +58,7 @@ func main() {
 		api.Any(`/benchmark`, ok())
 	}
 
-	s.ListenAndServe()
+	return httptest.NewServer(router)
 }
 
 func compression() gin.HandlerFunc {
@@ -133,7 +124,7 @@ func (g *handler) Write(data []byte) (count int, err error) {
 	return
 }
 
-// Fix: https://github.com/mholt/caddy/issues/38
+// WriteHeader Fix: https://github.com/mholt/caddy/issues/38
 func (g *handler) WriteHeader(code int) {
 	g.Header().Del("Content-Length")
 	g.ResponseWriter.WriteHeader(code)
