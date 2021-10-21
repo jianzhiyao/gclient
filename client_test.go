@@ -1,6 +1,7 @@
 package gclient
 
 import (
+	"github.com/jianzhiyao/gclient/tests"
 	"net/http"
 	"os"
 	"strconv"
@@ -45,7 +46,7 @@ func TestClient_Options(t *testing.T) {
 
 func TestClient_Do(t *testing.T) {
 	c := New()
-	url := os.Getenv(`TEST_TARGET`)
+	url := tests.GetServerUrl()
 
 	if resp, err := c.Do(http.MethodGet, url); err != nil {
 		t.Error(err)
@@ -56,7 +57,7 @@ func TestClient_Do(t *testing.T) {
 
 func TestClient_DoRequest(t *testing.T) {
 	c := New()
-	url := os.Getenv(`TEST_TARGET`)
+	url := tests.GetServerUrl()
 
 	if req, err := NewRequest(http.MethodGet, url); err != nil {
 		t.Error(err)
@@ -75,7 +76,7 @@ func BenchmarkClient_GClientGet(b *testing.B) {
 	limit := make(chan bool, benchmarkLimit)
 
 	c := New()
-	url := os.Getenv(`BENCHMARK_TARGET`)
+	url := tests.GetServerUrl() + "benchmark"
 	var wg sync.WaitGroup
 	wg.Add(b.N)
 	for i := 0; i < b.N; i++ {
@@ -101,7 +102,7 @@ func BenchmarkClient_HttpClientGet(b *testing.B) {
 	limit := make(chan bool, benchmarkLimit)
 
 	c := &http.Client{}
-	url := os.Getenv(`BENCHMARK_TARGET`)
+	url := tests.GetServerUrl() + "benchmark"
 	var wg sync.WaitGroup
 	wg.Add(b.N)
 	for i := 0; i < b.N; i++ {
@@ -124,7 +125,7 @@ func BenchmarkClient_HttpClientGet(b *testing.B) {
 
 func Benchmark_Gclient_NewRequest(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		if req, err := NewRequest(http.MethodGet, os.Getenv(`TEST_TARGET`)); err != nil {
+		if req, err := NewRequest(http.MethodGet, tests.GetServerUrl()); err != nil {
 			b.Error(err)
 		} else if req == nil {
 			b.Error()
@@ -134,7 +135,7 @@ func Benchmark_Gclient_NewRequest(b *testing.B) {
 
 func Benchmark_Http_NewRequest(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		if req, err := http.NewRequest(http.MethodGet, os.Getenv(`TEST_TARGET`), nil); err != nil {
+		if req, err := http.NewRequest(http.MethodGet, tests.GetServerUrl(), nil); err != nil {
 			b.Error(err)
 		} else if req == nil {
 			b.Error()

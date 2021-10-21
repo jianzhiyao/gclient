@@ -4,10 +4,10 @@ go:
   - "1.14.x"
 env:
   global:
-    - GO_REPO_FULLNAME="github.com/jianzhiyao/gclient" TEST_TARGET=http://127.0.0.1:8080/
+    - GO_REPO_FULLNAME="github.com/jianzhiyao/gclient"
   matrix:
-    - BENCHMARK_TARGET=http://127.0.0.1:8080/benchmark  BENCHMARK_LIMIT=50
-    - BENCHMARK_TARGET=http://127.0.0.1:8080/benchmark BENCHMARK_LIMIT=100
+    - BENCHMARK_LIMIT=50
+    - BENCHMARK_LIMIT=100
 before_install:
   # link the local repo with ${GOPATH}/src/<namespace>/<repo>
   - GO_REPO_NAMESPACE=${GO_REPO_FULLNAME%/*}
@@ -17,10 +17,7 @@ before_install:
   - cd ${GOPATH}/src/${GO_REPO_FULLNAME}
 install:
   - go version
-  # run in background
-  - go run scripts/server.go >/dev/null 2>&1 &
 before_script:
-  - sleep 10
   - go version
 after_script:
   - go version
